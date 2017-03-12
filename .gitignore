@@ -87,3 +87,8 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+*.tgz
+*.tex
+*.aux
+*.out
