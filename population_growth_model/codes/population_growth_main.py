@@ -14,8 +14,8 @@ from population_growth import *
 
 if __name__ == "__main__":
 
-    if len(sys.argv) == 1:
-        print("usage: python3 population_growth.py <1-7>")
+    if len(sys.argv) != 2:
+        print("usage: ./population_growth_main.py <1-7>")
         exit(1)
 
     if sys.argv[1] == '1':

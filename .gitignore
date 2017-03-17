@@ -92,3 +92,4 @@ ENV/
 *.tex
 *.aux
 *.out
+*.swp

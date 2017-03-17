@@ -17,7 +17,7 @@ class population_growth(object):
 
     def __init__(self, p0, **kwargs):
         self.p = [p0]
-        for k in list(kwargs.keys()):
+        for k in kwargs.keys():
             if hasattr(self, k):
                 setattr(self, k, kwargs[k])
             else:
