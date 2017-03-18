@@ -18,10 +18,19 @@ def simple_conditioning(n):
 
 # The partial conditioning experiment
 def partial_condtioning(n, p):
-    aux = lambda x : 1 if np.random.random() < 0.4 else 0
+    aux = lambda x : 1 if np.random.random() < p else 0
     aux = np.vectorize(aux)
     rewards = aux(np.empty(n))
     return np.array([np.ones(n), rewards])
+
+# The blocking effect
+def blocking(n):
+    sample = [[1,1],[0,1],[1,1]]
+    return np.repeat(sample, n, axis = 1)
+
+# For the overshadowing effect
+def all_present(n, num_stimuli):
+    return np.ones(shape = (num_stimuli + 1, n))
 
 
 # Ad-hoc functions to generate experiment samples and plot figures
@@ -32,14 +41,14 @@ def simple_experiment(flag = False):
         plt.plot(np.arange(50), trials[0], 'x')
         plt.plot(np.arange(50), trials[1], 'o')
     else:
-        plt.plot(np.arange(50), trials[0], 'x', label = "stimuli")
-        plt.plot(np.arange(50), trials[1], 'o', label = "rewards")
+        plt.plot(np.arange(50), trials[0], 'x', label = "stimulus")
+        plt.plot(np.arange(50), trials[1], 'o', label = "reward")
     return trials
 
 def plot_simple_experiment():
     simple_experiment()
     plt.xlabel("trial $n$")
-    plt.ylabel("stimuli and rewards")
+    plt.ylabel("stimulus and reward")
     plt.ylim(-0.35, 1.35)
 
 def plot_simple_simulation():
@@ -56,10 +65,47 @@ def plot_ss_epsi():
         RW_model.learn(trials)
         RW_model.plot("$\\epsilon$ = {}".format(epsilon))
         plt.ylim(-0.2, 1.2)
-        
+
+def plot_parcond_simulation():
+    trials = partial_condtioning(160, 0.4)
+    plt.plot(np.arange(160),trials[1], '1', label = "reward")
+    RW_model = pavlovian_conditioning()
+    RW_model.learn(np.transpose(trials))
+    RW_model.plot()
+    plt.ylim(-0.2, 1.2)
+
+def plot_pcs_epsi():
+    trials = np.transpose(partial_condtioning(500,0.4))
+    fig, ax = plt.subplots()
+    ax.set_color_cycle(["lightblue", "gold", "forestgreen", "purple"])
+    for epsilon in reversed([0.01, 0.02, 0.05, 0.1]):
+        RW_model = pavlovian_conditioning(learning_rate = epsilon)
+        RW_model.learn(trials)
+        RW_model.plot("$\\epsilon$ = {}".format(epsilon))
+        plt.ylim(-0.2, 1.2)
+
+def plot_blocking():
+    trials = blocking(25)
+    plt.plot(np.arange(50), trials[0], 'x', label = "CS1")
+    plt.plot(np.arange(50), trials[1], '*', label = "CS2")
+    RW_model = pavlovian_conditioning(2)
+    RW_model.learn(np.transpose(trials))
+    RW_model.plot()
+    plt.ylim(-0.35, 1.35)
+
+def plot_overshawdowing():
+    trials = np.transpose(all_present(50, 2))
+    RW_model = pavlovian_conditioning(2, learning_rate = np.array([0.2, 0.1]))
+    RW_model.learn(trials)
+    RW_model.plot()
+    plt.plot(np.arange(50), np.ones(50), '--', color = "black")
+    plt.ylim(-0.2, 1.2)
+
 
 cmd_functions = (
-[plot_simple_experiment, plot_simple_simulation, plot_ss_epsi])
+[ plot_simple_experiment, plot_simple_simulation, plot_ss_epsi,
+  plot_parcond_simulation, plot_pcs_epsi, plot_blocking, plot_overshawdowing ])
+
 
 if __name__ == "__main__":
 
@@ -69,15 +115,10 @@ if __name__ == "__main__":
 
     n = int(sys.argv[1])
     cmd_functions[n-1]()
-    plt.legend()
+    if n == 6:
+        plt.legend(ncol = 2)
+    else:
+        plt.legend()
     plt.savefig("../figures/pavCond{}".format(n))
     plt.show()
 
-    if sys.argv[1] == '4':
-        trials = partial_condtioning(2000, 0.4)
-        plt.plot(np.arange(2000), trials[1], '1', label = "reward")
-        RW_model = pavlovian_conditioning(1, learning_rate = 0.01)
-        RW_model.learn(np.transpose(trials))
-        RW_model.plot()
-        plt.ylim(-0.2, 1.2)
-        plt.show()

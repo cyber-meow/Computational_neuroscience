@@ -21,10 +21,9 @@ class pavlovian_conditioning(object):
                 print("Warning: parameter name {} not found!".format(k))
         self.w_his = [self.weights.copy()]
 
-    # stimuli must be a np array or a number and reward is 0 or 1
+    # stimuli must be a np array
     def learn_step(self, stimuli, reward):
-        if self.num_stimuli > 1:
-            assert(len(stimuli) == self.num_stimuli)
+        assert(len(stimuli) == self.num_stimuli)
         reward_supposed = np.sum(self.weights * stimuli)
         delta = reward - reward_supposed
         self.weights += delta * self.learning_rate * stimuli
@@ -32,7 +31,7 @@ class pavlovian_conditioning(object):
 
     def learn(self, experiences):
         for exp in experiences:
-            self.learn_step(exp[0], exp[1])
+            self.learn_step(exp[:-1], exp[-1])
 
     def plot(self, label = "$w$"):
         w_his = np.array(self.w_his)
