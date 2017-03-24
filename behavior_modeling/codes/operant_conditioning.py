@@ -1,6 +1,6 @@
 
 """
-Implantation of a simple instrumental learning model
+Implementation of a simple instrumental learning model
 The policy is given by the softmax strategy
 """
 

@@ -1,6 +1,6 @@
 
 """
-Implantation of Rescola-Wagner Model in Python3
+Implementation of Rescola-Wagner Model in Python3
 """
 
 

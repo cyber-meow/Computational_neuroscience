@@ -30,8 +30,8 @@ def softmax_diff():
     plt.ylabel("probability to choose blue flowers $p_b$")
     plt.legend()
 
-def flower_nectars():
-    sample = [[8,2],[2,8]]
+def flower_nectars(a,b,c,d):
+    sample = [[a,b],[c,d]]
     return np.repeat(sample, 100, axis = 1)
 
 # choice_his must be a numpy array
@@ -46,7 +46,7 @@ def dumb_bee(beta):
     ist = np.array([0.,5.])
     opercond = operant_conditioning(
                 tolearn = False, inter_states = ist, beta = beta)
-    samples = flower_nectars()
+    samples = flower_nectars(2,8,8,2)
     opercond.learn(np.transpose(samples))
     fig, ax = plt.subplots(figsize = (10,1))
     plot_behaviors(np.array(opercond.choice_his), ax)
@@ -56,12 +56,12 @@ def dumb_bee(beta):
     #plt.axis("off")
     
 
-#5,6,7
-def smart_bee(beta):
+#5,6,7,8,9
+def smart_bee(beta,l):
     
     ist = np.array([0.,5.])
     opercond = operant_conditioning(inter_states = ist, beta = beta)
-    samples = flower_nectars()
+    samples = flower_nectars(l[0],l[1],l[2],l[3])
     opercond.learn(np.transpose(samples))
     gs = GridSpec(3, 1,  height_ratios = [5,1,5])
 
@@ -80,16 +80,21 @@ def smart_bee(beta):
     opercond.plot_inter(1, ax2, "$m_y$", 'g')
     
     for ax in [ax0, ax2]:
-        ax.set_ylim(-1,11)
+        ax.set_ylim(l[4],l[5])
         ax.legend(ncol = 2)
     plt.tight_layout()
 
 
+l1 = [8,2,2,8,-1,11]
+l2 = [8,6,2,10,-1,14]
+
 cmd_functions = (
 [ softmax_beta, softmax_diff, lambda:dumb_bee(0), lambda:dumb_bee(0.8),
-  lambda:smart_bee(0.2), lambda:smart_bee(0), lambda:smart_bee(1)])
+  lambda:smart_bee(0.2,l1), lambda:smart_bee(0,l1), lambda:smart_bee(1,l1),
+  lambda:smart_bee(1,l2), lambda:smart_bee(0.2,l2)])
 
 usage = "usage: ./operant_conditioning.py <1-?>"
+
 
 if __name__ == "__main__":
 
