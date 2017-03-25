@@ -8,6 +8,7 @@ The policy is given by the softmax strategy
 import numpy as np
 from utility import set_all_args 
 
+
 class operant_conditioning(object):
 
     beta = 0.2

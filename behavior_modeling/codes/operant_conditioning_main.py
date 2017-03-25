@@ -93,7 +93,7 @@ cmd_functions = (
   lambda:smart_bee(0.2,l1), lambda:smart_bee(0,l1), lambda:smart_bee(1,l1),
   lambda:smart_bee(1,l2), lambda:smart_bee(0.2,l2)])
 
-usage = "usage: ./operant_conditioning.py <1-?>"
+usage = "usage: ./operant_conditioning_main.py <1-9>"
 
 
 if __name__ == "__main__":

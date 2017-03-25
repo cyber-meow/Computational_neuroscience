@@ -31,12 +31,12 @@ class pavlovian_conditioning(object):
             self.learn_step(exp[:-1], exp[-1])
 
     def plot(self, label = "$w$"):
-        w_his = np.array(self.w_his)
+        w_his = np.transpose(self.w_his)
         if self.num_stimuli == 1:
-            plt.plot(w_his[:,0], label = label)
+            plt.plot(w_his[0], label = label)
         else:
             for i in range(self.num_stimuli):
-                plt.plot(w_his[:,i], label = "$w^{{({})}}$".format(i+1))
+                plt.plot(w_his[i], label = "$w^{{({})}}$".format(i+1))
         plt.xlabel("trial $n$")
         plt.ylabel("animal's prediction parameter $w$")
 
