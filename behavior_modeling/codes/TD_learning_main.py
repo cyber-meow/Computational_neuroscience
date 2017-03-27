@@ -47,12 +47,14 @@ def pre_plot():
 def random_rat():
     TDL = TD_learning(maze_obj, rand)
     TDL.trials(100)
+    TDL.print_visit_times()
     labels = pre_plot()
     TDL.plot_V(labels)
 
 def smart_rat(beta):
     TDL = TD_learning(maze_obj, partial(softmax, beta))
     TDL.trials(100)
+    TDL.print_visit_times()
     labels = pre_plot()
     TDL.plot_V(labels)
 

@@ -69,6 +69,13 @@ class TD_learning(object):
         for _ in range(n):
             self.one_trial()
 
+    def print_visit_times(self):
+        res = np.zeros(self.maze.num_states)
+        for trial in self.trial_his:
+            for s in trial:
+                res[s] += 1
+        print(res)
+
     def plot_V(self, labels):
         sv_his = np.transpose(self.sv_his)
         for i, sv in enumerate(sv_his):
