@@ -62,7 +62,7 @@ def smart_rat(beta):
 cmd_functions = ([ random_rat, lambda:smart_rat(0.05), 
                    lambda:smart_rat(0.3), lambda:smart_rat(1) ])
 
-usage = "usage ./TD-learning_main.py <1-4>"
+usage = "usage ./TD_learning_main.py <1-4>"
 
 
 if __name__ == "__main__":
