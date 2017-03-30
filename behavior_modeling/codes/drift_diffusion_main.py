@@ -27,6 +27,8 @@ def proba_outA(mE):
     print(mE, numA/(numA+numB), time.time() - t)
     return numA/(numA+numB)
 
+# It can take more than 10 minutes to run this function 
+# (~ 10s per point, of course it depends a lot on the speed of thecomputer)
 def proba_outA_plot():
     pA = np.vectorize(proba_outA)
     pA_theo = lambda x: 1/(1 + np.exp(0.8/0.25 * (-x)))

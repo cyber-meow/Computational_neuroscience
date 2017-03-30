@@ -44,7 +44,7 @@ class drift_diffusion(object):
     def plot_curve(self, t):
         colors = plt.cm.jet(np.linspace(0,1,len(self.simu_his)))
         fig, ax = plt.subplots()
-        ax.set_color_cycle(colors)
+        ax.set_prop_cycle("color", colors)
         for simu in self.simu_his:
             plt.plot(self.delta_t * np.arange(len(simu)), simu)
         plt.plot((0,t), (self.mu,self.mu), '--', color = "black")
@@ -64,7 +64,7 @@ class drift_diffusion(object):
         ax2.hist(hisB, 40, color = "greenyellow")
         ax2.set_title("outcome B")
         for ax in [ax1, ax2]:
-            ax.set_xlabel("reaction time $\\mathtt{RT}$ (s)")
+            ax.set_xlabel("reaction time $\\mathrm{RT}$ (s)")
             ax.margins(0.05)
             ax.set_ylim(ymin = 0)
             ax.title.set_position([.5,1.03])
