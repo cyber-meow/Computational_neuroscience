@@ -8,16 +8,19 @@ import time
 from drift_diffusion import *
 
 
+#1
 def many_runs(n):
     dd = drift_diffusion(1, 0.95, 0.4)
     dd.simulate(1, n)
     dd.plot_curve(1)
 
+#2
 def reactime_distr():
     dd = drift_diffusion(1, 0.95, 0.4)
     dd.simulate(1, 1000, False)
     dd.plot_reactime()
 
+#3
 def proba_outA(mE):
     dd = drift_diffusion(mE, 0, 0.4)
     t = time.time()
