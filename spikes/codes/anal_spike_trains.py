@@ -66,12 +66,13 @@ def mean_std_spikes(M, T, t_start, t_end):
 def tunning_curve():
     mean_counts, s = mean_std_spikes(cell["spt"][0], cell["t"][0], 200, 700)
     f = open("../figures/analStMeanStd", 'w')
+    f.write(str(cell["f1"][0]) + "\n")
     f.write(str(mean_counts) + "\n")
     f.write(str(s))
     firing_rates = [2 * c for c in mean_counts]
     plt.plot(cell["f1"][0], firing_rates)
     plt.xlabel("stimulus frequency (Hz)")
-    plt.ylabel("firing rate (spike count / sec)")
+    plt.ylabel("firing rate (spikes/sec)")
     plt.margins(0.05)
 
 

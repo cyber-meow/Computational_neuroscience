@@ -33,8 +33,7 @@ class spike_trains(object):
         fig, ax = plt.subplots(figsize = figsize)
         plt.eventplot(self.t_his, colors = [[0,0,0]], lineoffsets = ofs)
         ax.yaxis.set_visible(False)
-        plt.margins(0.01)
-        plt.xlim(-t*0.01, t*1.01)
+        plt.margins(0.01,0)
         if xlab:
             plt.xlabel("time (s)")
         plt.tight_layout()

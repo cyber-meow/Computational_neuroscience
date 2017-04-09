@@ -12,15 +12,14 @@ def save_show(n):
 def poisson_process():
     st = spike_trains(1)
     st.create_spikes(1/4, 1000)
-    st.plot_spikes(1000, (10,1.5), 1, False)
+    st.plot_spikes(1000, (10,1.2), 1, False)
     save_show(1)
-
 
 #2
 def spike_train():
     st = spike_trains(2e-3)
     st.create_spikes(25, 1)
-    st.plot_spikes(1, (10, 1.5), 1)
+    st.plot_spikes(1, (10, 1.4), 1)
     save_show(2)
 
 #3
@@ -40,7 +39,6 @@ cmd_functions = ([ poisson_process, spike_train,
                    lambda : spike_trains_n(500,6) ])
 
 usage = "usage: ./spike_train_poisson_main.py <1-4>"
-
 
 if __name__ == "__main__":
 
