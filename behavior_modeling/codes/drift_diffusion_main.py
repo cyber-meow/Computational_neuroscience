@@ -46,7 +46,7 @@ def proba_outA_plot():
 
 cmd_functions = ([ lambda:many_runs(8), reactime_distr, proba_outA_plot ])
 
-usage = "usage ./drift_diffusion_main.py <1-3>"
+usage = "usage: ./drift_diffusion_main.py <1-3>"
 
 
 if __name__ == "__main__":
