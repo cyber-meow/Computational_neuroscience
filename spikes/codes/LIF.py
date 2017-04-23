@@ -30,6 +30,7 @@ class LIF(object):
         self.spiking = spiking
         self.current_V = self.EL
         set_all_args(self, kwargs)
+        self._just_spike = False
         self._spike_moments = []
         self._V_his, self._t_his = [self.current_V], [0] # t_his in s
 
@@ -66,6 +67,7 @@ class LIF(object):
         return self._spike_moments
 
     def _computeV_step(self):
+        self._just_spike = False
         # we can verify the homogeneity of the eqution
         self.current_V += ((
             self.gL * (self.EL - self.current_V) + self.I(self._t_his[-1])) 
@@ -73,6 +75,7 @@ class LIF(object):
         self._V_his.append(self.current_V)
         self._t_his.append(self._t_his[-1] + self.delta_t * 1e-3)
         if self.spiking and self.current_V >= self.Vth:
+            self._just_spike = True
             self._spike_moments.append(self._t_his[-1])
             self.current_V = self.EL
             self._V_his.append(self.current_V)
@@ -103,6 +106,7 @@ class LIF(object):
 
 
 class LIFICst(LIF):
+    """When the input current is constant"""
 
     # self.I is the function while self._I is the constant value
     @property
@@ -140,4 +144,37 @@ class LIFNumeric(LIFICst):
             + (self.EL-self._Vinfty) * np.exp(-self._t_his/self._tau_m))
 
 
-#class LIP_
+class LIFRefractory(LIF):
+    """Take into account the refractory period"""
+
+    delta = 3  # ms
+
+    def __init__(self, I, spiking=True, **kwargs):
+        super().__init__(I, spiking, **kwargs)
+        self._refrac_time = -1
+    
+    def _computeV_step(self):
+        if self._refrac_time < 0:
+            super()._computeV_step()
+            if self._just_spike:
+                self._refrac_time = 0
+        elif self._refrac_time >= self.delta:
+            self._refrac_time = -1
+            super()._computeV_step()
+        else:
+            self._just_spike = False
+            self._refrac_time += self.delta_t
+            self._V_his.append(self.current_V)
+            self._t_his.append(self._t_his[-1] + self.delta_t * 1e-3)
+
+
+class LIFICstRefractory(LIFRefractory, LIFICst):
+
+    @property
+    def firing_rate(self):
+        f = super().firing_rate
+        if f == 0:
+            return 0
+        return 1/(self.delta*1e-3 + 1/f)
+
+
