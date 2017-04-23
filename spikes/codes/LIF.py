@@ -178,3 +178,31 @@ class LIFICstRefractory(LIFRefractory, LIFICst):
         return 1/(self.delta*1e-3 + 1/f)
 
 
+class LIFNoise(LIF):
+    "Add gaussian white noise"
+
+    sigma = 1  # mV * ms^(1/2)
+
+    def _computeV_step(self):
+        self._just_spike = False
+        self.current_V += ((
+            self.gL * (self.EL - self.current_V) + self.I(self._t_his[-1])) 
+            / self.C * self.delta_t 
+            + self.sigma * np.sqrt(self.delta_t) * np.random.randn())
+        self._V_his.append(self.current_V)
+        self._t_his.append(self._t_his[-1] + self.delta_t * 1e-3)
+        if self.spiking and self.current_V >= self.Vth:
+            self._just_spike = True
+            self._spike_moments.append(self._t_his[-1])
+            self.current_V = self.EL
+            self._V_his.append(self.current_V)
+            self._t_his.append(self._t_his[-1])
+    
+    def plot_V(self, ax, label=None, xylabel=True):
+        super().plot_V(ax, label, xylabel)
+        ax.margins(None, 0.2)
+        ax.set_ylim(ymax=self.Vth*2.5-self.EL*1.5)
+
+
+class LIFRefractoryNoise(LIFRefractory, LIFNoise):
+    pass

@@ -90,6 +90,14 @@ def tunning_ref(Is):
     plt.legend(loc='best')
 
 
+#9
+def cst_current_noise(I, delta_t, ax=None, label=None, xylabel=True):
+    if ax is None:
+        fig, ax = plt.subplots()
+    neuron = LIFRefractoryNoise(lambda t: I, True, delta_t=delta_t)
+    neuron.computeV(0.1)
+    neuron.plot_V(ax, label, xylabel)
+
         
 cmd_functions = (
     [ lambda : cst_current(1, False, 1),
@@ -99,7 +107,8 @@ cmd_functions = (
       LIF_spikes,
       lambda : tunning_curve_cst(np.linspace(0,2,100)),
       lambda : cst_current_ref(1, 0.1),
-      lambda : tunning_ref(np.linspace(0,5,1000)) ])
+      lambda : tunning_ref(np.linspace(0,5,1000)),
+      lambda : cst_current_noise(1, 0.1) ])
 
 
 if __name__ == "__main__":
