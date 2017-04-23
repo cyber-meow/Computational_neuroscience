@@ -1,5 +1,6 @@
 #! /usr/bin/python3
 
+import matplotlib.pyplot as plt
 import sys
 from spike_train_poisson import *
 
