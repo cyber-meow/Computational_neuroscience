@@ -28,8 +28,8 @@ class LIF(object):
     def __init__(self, I, spiking=True, **kwargs):
         self.I = I
         self.spiking = spiking
-        self.current_V = self.EL
         set_all_args(self, kwargs)
+        self.current_V = self.EL
         self._just_spike = False
         self._spike_moments = []
         self._V_his, self._t_his = [self.current_V], [0] # t_his in s
@@ -51,7 +51,17 @@ class LIF(object):
     def gL(self, gL):
         self._gL = gL
         self._R = 1 / gL
-        self._tau_m = self._R * self.C * 1e-3
+        self._tau_m = self.C / gL * 1e-3
+
+    @property 
+    def R(self):
+        return self._R
+
+    @R.setter
+    def R(self, R):
+        self._R = R
+        self._gL = 1 / R
+        self._tau_m = R * self.C * 1e-3
 
     @property
     def C(self):
@@ -60,7 +70,7 @@ class LIF(object):
     @C.setter
     def C(self, C):
         self._C = C
-        self._tau_m = self._R * self.C * 1e-3
+        self._tau_m = self.R * C * 1e-3
 
     @property
     def spike_moments(self):
@@ -87,7 +97,7 @@ class LIF(object):
         for _ in range(N):
             self._computeV_step()
 
-    def plot_V(self, ax, label=None, xylabel=True):
+    def plot_V(self, ax, label=None, xylabel=True, unit=True):
         if label is None:
             ax.plot(self._t_his, self._V_his)
         else:
@@ -102,7 +112,10 @@ class LIF(object):
             ax.set_ylim(self.EL, self.Vth*2.5 - self.EL*1.5)
         if xylabel:
             ax.set_xlabel("time $t$ (s)")
-            ax.set_ylabel("membrane potential $V$ (mV)")
+            if unit:
+                ax.set_ylabel("membrane potential $V$ (mV)")
+            else:
+                ax.set_ylabel("membrane potential $V$")
 
 
 class LIFICst(LIF):
@@ -118,7 +131,7 @@ class LIFICst(LIF):
     def I(self, I):
         assert isinstance(I, (int, float))
         self._I = I
-        self._Vinfty = self.EL + self._I * self._R  # mV
+        self._Vinfty = self.EL + self._I * self.R  # mV
     
     @property
     def firing_rate(self):
@@ -165,7 +178,7 @@ class LIFRefractory(LIF):
             self._just_spike = False
             self._refrac_time += self.delta_t
             self._V_his.append(self.current_V)
-            self._t_his.append(self._t_his[-1] + self.delta_t * 1e-3)
+            self._t_his.append(self._t_his[-1] + self.delta_t*1e-3)
 
 
 class LIFICstRefractory(LIFRefractory, LIFICst):
@@ -197,11 +210,6 @@ class LIFNoise(LIF):
             self.current_V = self.EL
             self._V_his.append(self.current_V)
             self._t_his.append(self._t_his[-1])
-    
-    def plot_V(self, ax, label=None, xylabel=True):
-        super().plot_V(ax, label, xylabel)
-        ax.margins(None, 0.2)
-        ax.set_ylim(ymax=self.Vth*2.5-self.EL*1.5)
 
 
 class LIFRefractoryNoise(LIFRefractory, LIFNoise):

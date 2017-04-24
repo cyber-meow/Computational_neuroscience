@@ -4,7 +4,10 @@ import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from LIF import *
+from spike_train_poisson import plot_spike_trains
 
+
+# Constant input
 
 #1
 def cst_current(I, spiking, delta_t, ax=None, label=None, xylabel=True):
@@ -39,10 +42,11 @@ def anal_nume_cmp():
     neuron_nume.plot_V(ax, "numerical solution")
     plt.legend(loc='best')
 
+
 def cst_current_spike(I, ax, title):
     cst_current(I, True, 0.1, ax, xylabel=False)
-    ax.title.set_position([.5, 1.03])
     ax.set_title(title)
+    ax.title.set_position([.5, 1.03])
 
 #5
 def LIF_spikes():
@@ -98,7 +102,51 @@ def cst_current_noise(I, delta_t, ax=None, label=None, xylabel=True):
     neuron.computeV(0.1)
     neuron.plot_V(ax, label, xylabel)
 
-        
+#10
+def LIF_noise_trains():
+    fig, axs = plt.subplots(4, 1, figsize=(10,5), sharex='col')
+    for i,sigma in enumerate([0.1, 1, 2, 5]):
+        spike_trains = []
+        for _ in range(10):
+            neuron = LIFRefractoryNoise(
+                lambda t: 1, True, delta_t=0.1, sigma=sigma)
+            neuron.computeV(0.5)
+            spike_trains.append(neuron.spike_moments)
+        plot_spike_trains(
+            spike_trains, (-0.001, 0.501), axs[i], 1.3, xlab=False)
+        axs[i].set_title("$\\sigma = {}$".format(sigma))
+        axs[i].title.set_position([0.5, 1.03])
+    plt.xlabel("time $t$ (s)")
+    plt.tight_layout()
+
+
+# Oscillating input part
+
+def I_data(f):
+    def I(t):
+        if 0.2 <= t < 0.7:
+            return 2 + np.cos(np.pi*f*(t-200))
+        return 0
+    return I
+
+def data_trains(f):
+    fig, ax = plt.subplots(figsize=(10,2))
+    spike_trains = []
+    for _ in range(10):
+        neuron = LIFRefractoryNoise(
+            I_data(f), True, delta_t=0.1, sigma=1, Vth=-55)
+        neuron.computeV(1)
+        spike_trains.append(neuron.spike_moments)
+    plot_spike_trains(spike_trains, (-0.001, 1.001), ax, 1.3)
+
+def data_current(f):
+    fig, ax = plt.subplots()
+    neuron = LIFRefractory(
+        I_data(f), True, delta_t=0.1, Vth=-55)
+    neuron.computeV(1)
+    neuron.plot_V(ax)
+
+
 cmd_functions = (
     [ lambda : cst_current(1, False, 1),
       lambda : cst_currents([3,2,1], False, 1),
@@ -108,7 +156,10 @@ cmd_functions = (
       lambda : tunning_curve_cst(np.linspace(0,2,100)),
       lambda : cst_current_ref(1, 0.1),
       lambda : tunning_ref(np.linspace(0,5,1000)),
-      lambda : cst_current_noise(1, 0.1) ])
+      lambda : cst_current_noise(1, 0.1),
+      LIF_noise_trains,
+      lambda : data_trains(27.7), 
+      lambda : data_current(27.7) ])
 
 
 if __name__ == "__main__":

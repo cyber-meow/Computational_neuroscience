@@ -19,7 +19,7 @@ def events_matrix(M, T):
     return res
     
 def spike_trains_S1():
-    trains = cell["spt"][0,1]
+    trains = cell["spt"][0,0]
     fig, ax = plt.subplots(figsize = (10,2))
     res = events_matrix(trains, cell["t"][0])
     plt.eventplot(res, colors = [[0,0,0]], lineoffsets = 1.5)
