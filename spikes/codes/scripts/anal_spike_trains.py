@@ -1,20 +1,27 @@
 #! /usr/bin/python3
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../models'))
+
 from scipy.io import loadmat
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 
+from spike_train import plot_spike_trains, plot_spike_train_groups
+
 
 cell = loadmat("simdata.mat")
 
+# The result time is in s
 def events_matrix(M, T):
     res = []
     for row in M:
         events = []
-        for i,t in enumerate(row):
-            if t == 1:
-                events.append(T[i])
+        for i,s in enumerate(row):
+            if s == 1:
+                events.append(T[i]*1e-3)
         res.append(events)
     return res
     
@@ -22,34 +29,14 @@ def spike_trains_S1():
     trains = cell["spt"][0,0]
     fig, ax = plt.subplots(figsize = (10,2))
     res = events_matrix(trains, cell["t"][0])
-    plt.eventplot(res, colors = [[0,0,0]], lineoffsets = 1.5)
-    spike_trains_post_plot(ax)
+    plot_spike_trains(res, (-0.001, 1.001), ax, 1.5)
+    ax.invert_yaxis()
 
 def spike_trains_all():
-    res = []
     fig, ax = plt.subplots(figsize = (10,6))
-    ypos = 0
-    colors = []
-    for i,trains in enumerate(cell["spt"][0]):
-        res.extend(events_matrix(trains, cell["t"][0]))
-        newypos = ypos + trains.shape[0] * 1.3
-        if i % 2 == 0:
-            plt.axhspan(ypos, newypos, color = [0.95]*3)
-            color = [0] * 3
-        else:
-            color = [0.2] * 3
-        ypos = newypos
-        colors.extend([color for _ in range(trains.shape[0])])
-    plt.eventplot(res, colors = colors, lineoffsets = 1.3)
-    spike_trains_post_plot(ax)
-
-def spike_trains_post_plot(ax):
-    plt.margins(0)
-    plt.xlim(-0.2,1000.2)
-    plt.xlabel("time (ms)")
-    plt.tight_layout()
+    res = [events_matrix(trains, cell["t"][0]) for trains in cell["spt"][0]]
+    plot_spike_train_groups(res, (-0.001, 1.001), ax, 1.3)
     ax.invert_yaxis()
-    ax.yaxis.set_visible(False)
 
 
 def mean_std_spikes(M, T, t_start, t_end):
@@ -89,7 +76,7 @@ if __name__ == "__main__":
     try:
         n = int(sys.argv[1])
         cmd_functions[n-1]()
-        plt.savefig("../figures/analSt{}".format(n))
+        plt.savefig("../../figures/analSt{}".format(n))
         plt.show()
 
     except:

@@ -1,31 +1,36 @@
 #! /usr/bin/python3
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../models'))
+
 import matplotlib.pyplot as plt
 import sys
-from spike_train_poisson import *
+
+from spike_train import *
 
 
 def save_show(n):
-    plt.savefig("../figures/stPoisson{}".format(n))
+    plt.savefig("../../figures/stPoisson{}".format(n))
     plt.show()
 
 #1 
 def poisson_process():
-    st = spike_trains(1)
+    st = poisson_spike_trains(1)
     st.create_spikes(1/4, 1000)
     st.plot_spikes(1000, (10,1.2), 1, False)
     save_show(1)
 
 #2
 def spike_train():
-    st = spike_trains(2e-3)
+    st = poisson_spike_trains(2e-3)
     st.create_spikes(25, 1)
     st.plot_spikes(1, (10, 1.4), 1)
     save_show(2)
 
 #3
 def spike_trains_n(n, fignum):
-    st = spike_trains(2e-3)
+    st = poisson_spike_trains(2e-3)
     st.create_spikes(25, 1, n)
     st.plot_spikes(1, (10, 3), 1.2)
     save_show(fignum)
@@ -35,11 +40,12 @@ def spike_trains_n(n, fignum):
     save_show(fignum + 2)
 
 
-cmd_functions = ([ poisson_process, spike_train, 
+cmd_functions = ([ poisson_process, 
+                   spike_train, 
                    lambda : spike_trains_n(50,3), 
                    lambda : spike_trains_n(500,6) ])
 
-usage = "usage: ./spike_train_poisson_main.py <1-4>"
+usage = "usage: ./poisson_spike_train_poisson.py <1-4>"
 
 if __name__ == "__main__":
 

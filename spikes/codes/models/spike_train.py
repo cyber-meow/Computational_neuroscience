@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import matplotlib.mlab as mlab
 
 
-class spike_trains(object):
+class poisson_spike_trains(object):
 
     def __init__(self, delta_t):
         self.delta_t = delta_t
@@ -59,5 +59,24 @@ def plot_spike_trains(trains, ts, ax, ofs, xlab=True):
     ax.margins(None, 0.01)
     ax.set_xlim(ts[0], ts[1])
     if xlab:
-        plt.xlabel("time (s)")
+        ax.set_xlabel("time (s)")
     plt.tight_layout()
+
+# plot several group of spike trains
+def plot_spike_train_groups(train_groups, ts, ax, ofs, xlab=True):
+    res = []
+    ypos = 0
+    colors = []
+    for i, trains in enumerate(train_groups):
+        res.extend(trains)
+        newypos = ypos + len(trains) * ofs
+        if i%2 == 0:
+            plt.axhspan(ypos, newypos, color=[0.95]*3)
+            color = [0] * 3
+        else:
+            color = [0.2] * 3
+        ypos = newypos
+        colors.extend([color for _ in range(len(trains))])
+    plot_spike_trains(res, ts, ax, ofs, xlab)
+    plt.margins(None, 0)
+

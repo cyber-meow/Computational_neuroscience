@@ -1,10 +1,14 @@
 #! /usr/bin/python3
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../models'))
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
 from LIF import *
-from spike_train_poisson import plot_spike_trains
+from spike_train import plot_spike_trains, plot_spike_train_groups
 
 
 # Constant input
@@ -120,31 +124,39 @@ def LIF_noise_trains():
     plt.tight_layout()
 
 
-# Oscillating input part
+# Simulate expeimental data
 
 def I_data(f):
+    T = 1 / f
     def I(t):
-        if 0.2 <= t < 0.7:
-            return 2 + np.cos(np.pi*f*(t-200))
+        if 0.2 <= t < 0.7 and (t-0.2)%T < 0.014:
+            return 3
         return 0
     return I
 
-def data_trains(f):
-    fig, ax = plt.subplots(figsize=(10,2))
-    spike_trains = []
-    for _ in range(10):
-        neuron = LIFRefractoryNoise(
-            I_data(f), True, delta_t=0.1, sigma=1, Vth=-55)
-        neuron.computeV(1)
-        spike_trains.append(neuron.spike_moments)
-    plot_spike_trains(spike_trains, (-0.001, 1.001), ax, 1.3)
+def data_current_plot(f):
+    ts = np.linspace(0, 1, 1000)
+    I_input = I_data(f)
+    plt.plot(ts, [I_input(t) for t in ts])
+    plt.xlabel("time $t$ (s)")
+    plt.ylabel("input current $I$ (nA)")
+    plt.margins(None, 0.4)
+    plt.ylim(ymin=0)
 
-def data_current(f):
-    fig, ax = plt.subplots()
-    neuron = LIFRefractory(
-        I_data(f), True, delta_t=0.1, Vth=-55)
-    neuron.computeV(1)
-    neuron.plot_V(ax)
+def data_trains():
+    fig, ax = plt.subplots(figsize=(10,5))
+    fs = [8.4, 12, 15.7, 19.6, 23.6, 25.9, 27.7, 35]
+    spike_trains_groups = []
+    for f in fs:
+        spike_trains = []
+        for _ in range(10):
+            neuron = LIFRefractoryNoise(
+                I_data(f), True, delta_t=0.1, sigma=1.3)
+            neuron.computeV(1)
+            spike_trains.append(neuron.spike_moments)
+        spike_trains_groups.append(spike_trains)
+    plot_spike_train_groups(spike_trains_groups, (-0.001, 1.001), ax, 1.3)
+    ax.invert_yaxis()
 
 
 cmd_functions = (
@@ -157,14 +169,13 @@ cmd_functions = (
       lambda : cst_current_ref(1, 0.1),
       lambda : tunning_ref(np.linspace(0,5,1000)),
       lambda : cst_current_noise(1, 0.1),
-      LIF_noise_trains,
-      lambda : data_trains(27.7), 
-      lambda : data_current(27.7) ])
+      LIF_noise_trains, 
+      lambda : data_current_plot(20), data_trains ])
 
 
 if __name__ == "__main__":
 
     n = int(sys.argv[1])
     cmd_functions[n-1]()
-    plt.savefig("../figures/LIF{}".format(n))
+    plt.savefig("../../figures/LIF{}".format(n))
     plt.show()

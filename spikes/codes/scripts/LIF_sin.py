@@ -1,10 +1,15 @@
 #! /usr/bin/python3
 
+import sys
+import os
+sys.path.insert(0, os.path.abspath('../models'))
+
 import numpy as np
 import matplotlib.pyplot as plt
 import sys
+
 from LIF import *
-from spike_train_poisson import plot_spike_trains
+from spike_train import plot_spike_trains
 
 
 # Sinusoidal input
@@ -52,10 +57,11 @@ def tunning_curve_sin(fs):
     num_spikes = []
     for f in fs:
         neuron = LIF(I_sin(f), True, delta_t=0.1, EL=0, Vth=1, R=1, C=100)
-        neuron.computeV(10)
-        num_spikes.append(len(neuron.spike_moments)/10)
+        neuron.computeV(25)
+        num_spikes.append(len(neuron.spike_moments)/25)
     plt.plot(fs, num_spikes)
-    plt.xlabel("input current $I$")
+    plt.xlim(0.99, 40.01)
+    plt.xlabel("input current frequency $f$ (Hz)")
     plt.ylabel("firing rate $f_{firing}$ (Hz)")
 
 """
@@ -83,5 +89,5 @@ if __name__ == "__main__":
 
     n = int(sys.argv[1])
     cmd_functions[n-1]()
-    plt.savefig("../figures/LIFSin{}".format(n))
+    plt.savefig("../../figures/LIFSin{}".format(n))
     plt.show()
