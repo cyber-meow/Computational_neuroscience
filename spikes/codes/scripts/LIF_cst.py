@@ -124,7 +124,7 @@ def LIF_noise_trains():
     plt.tight_layout()
 
 
-# Simulate expeimental data
+# Simulate experimental data
 
 def I_data(f):
     T = 1 / f
@@ -134,6 +134,7 @@ def I_data(f):
         return 0
     return I
 
+#11
 def data_current_plot(f):
     ts = np.linspace(0, 1, 1000)
     I_input = I_data(f)
@@ -143,6 +144,7 @@ def data_current_plot(f):
     plt.margins(None, 0.4)
     plt.ylim(ymin=0)
 
+#12
 def data_trains():
     fig, ax = plt.subplots(figsize=(10,5))
     fs = [8.4, 12, 15.7, 19.6, 23.6, 25.9, 27.7, 35]

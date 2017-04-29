@@ -56,7 +56,7 @@ def sin_current_spikes(C):
 def tunning_curve_sin(fs):
     num_spikes = []
     for f in fs:
-        neuron = LIF(I_sin(f), True, delta_t=0.1, EL=0, Vth=1, R=1, C=100)
+        neuron = LIF(I_sin(f), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
         neuron.computeV(25)
         num_spikes.append(len(neuron.spike_moments)/25)
     plt.plot(fs, num_spikes)
@@ -64,17 +64,35 @@ def tunning_curve_sin(fs):
     plt.xlabel("input current frequency $f$ (Hz)")
     plt.ylabel("firing rate $f_{firing}$ (Hz)")
 
-"""
-def data_trains(f):
-    fig, ax = plt.subplots(figsize=(10,2))
+#6
+def sin_trains():
+    fig, ax = plt.subplots(figsize=(10,3))
     spike_trains = []
-    for _ in range(10):
-        neuron = LIFRefractoryNoise(
-            I_data(f), True, delta_t=0.1, sigma=1, Vth=-55)
-        neuron.computeV(1)
+    for f in [1, 2, 5, 10, 20, 40, 100]:
+        neuron = LIF(I_sin(f), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
+        neuron.computeV(2)
         spike_trains.append(neuron.spike_moments)
-    plot_spike_trains(spike_trains, (-0.001, 1.001), ax, 1.3)
-"""
+    plot_spike_trains(spike_trains, (-0.001, 2.001), ax, 1.3)
+    ax.invert_yaxis()
+
+#7
+def tunning_curve_sin2():
+    spikes = np.zeros(30001)
+    neuron = LIF(I_sin(40), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
+    neuron.computeV(3)
+    for t in neuron.spike_moments:
+        spikes[int(t * 10000)] = 1
+    spike_cs = np.convolve(spikes, np.ones(100)*1e-2, 'same') 
+    fs = np.abs(np.fft.fft(spike_cs))
+    plt.bar(np.linspace(0, 1000, 30001), fs)
+    plt.xlabel("frequency (Hz)")
+    plt.ylabel("energy")
+    """
+    low_f_comp = np.zeros(len(fs), 30001)
+    for f in fs:
+        neuron = LIF(I_sin(f), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
+        neuron.computeV(3)
+    """
 
 
 cmd_functions = (
@@ -82,7 +100,8 @@ cmd_functions = (
       lambda : sin_current(1, 100, False),
       lambda : sin_current_spikes(100),
       lambda : sin_current_spikes(10),
-      lambda : tunning_curve_sin(np.linspace(1, 40, 400)) ])
+      lambda : tunning_curve_sin(np.linspace(1, 40, 400)),
+      sin_trains, tunning_curve_sin2 ])
 
 
 if __name__ == "__main__":
