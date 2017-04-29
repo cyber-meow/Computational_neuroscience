@@ -60,7 +60,7 @@ def tunning_curve_sin(fs):
         neuron.computeV(25)
         num_spikes.append(len(neuron.spike_moments)/25)
     plt.plot(fs, num_spikes)
-    plt.xlim(0.99, 40.01)
+    plt.xlim(fs[0]-0.01, fs[-1]+0.01)
     plt.xlabel("input current frequency $f$ (Hz)")
     plt.ylabel("firing rate $f_{firing}$ (Hz)")
 
@@ -102,15 +102,26 @@ def plot_frequency_spectrum(f, t_max):
 def tunning_curve_sin2(fs, t_max):
     lowest_f_comp = []
     for f in fs:
-        print(f)
         response_fs = compute_frequency_spectrum(f, t_max)
         lowest_f_comp.append((np.argmax(response_fs[1:t_max*5000+1])+1)/t_max)
     plt.plot(fs, lowest_f_comp)
-    plt.xlim(0.99, 40.01)
+    plt.xlim(fs[0]-0.01, fs[-1]+0.01)
     plt.xlabel("input current frequency $f$ (Hz)")
     plt.ylabel("frequency of the neuron response $f_r$ (Hz)")
-    
-    
+
+#9
+def tunning_curve_sin3(fs):
+    fts = []
+    for f in fs:
+        neuron = LIF(I_sin(f), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
+        neuron.computeV(1)
+        fts.append(neuron.spike_moments[0])
+    plt.plot(fs, fts)
+    plt.xlim(fs[0]-0.01, fs[-1]+0.01)
+    plt.xlabel("input current frequency $f$ (Hz)")
+    plt.ylabel("first spike moment (s)")
+
+
 cmd_functions = (
     [ stimuli_plot,
       lambda : sin_current(1, 100, False),
@@ -119,7 +130,8 @@ cmd_functions = (
       lambda : tunning_curve_sin(np.linspace(1, 40, 400)),
       sin_trains,
       lambda : plot_frequency_spectrum(20, 20),
-      lambda : tunning_curve_sin2(np.linspace(1, 40, 400), 10) ])
+      lambda : tunning_curve_sin2(np.linspace(1, 40, 400), 10),
+      lambda : tunning_curve_sin3(np.linspace(1, 40, 400)) ])
 
 
 if __name__ == "__main__":
