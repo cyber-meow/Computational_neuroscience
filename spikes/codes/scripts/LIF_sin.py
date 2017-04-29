@@ -75,33 +75,51 @@ def sin_trains():
     plot_spike_trains(spike_trains, (-0.001, 2.001), ax, 1.3)
     ax.invert_yaxis()
 
-#7
-def tunning_curve_sin2():
-    spikes = np.zeros(30001)
-    neuron = LIF(I_sin(40), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
-    neuron.computeV(3)
-    for t in neuron.spike_moments:
-        spikes[int(t * 10000)] = 1
-    spike_cs = np.convolve(spikes, np.ones(100)*1e-2, 'same') 
-    fs = np.abs(np.fft.fft(spike_cs))
-    plt.bar(np.linspace(0, 1000, 30001), fs)
+# t in s, the larger is t, the better is the precision 
+def compute_frequency_spectrum(f, t_max):
+    spikes = np.zeros(t_max*10000+1)
+    neuron = LIF(I_sin(f), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
+    neuron.computeV(t_max)
+    for spike_t in neuron.spike_moments:
+        spikes[int(spike_t * 10000)] = 1
+    spike_counts = np.convolve(spikes, np.hanning(3500), 'same')    
+    # fig = plt.figure(1)
+    # plt.plot(np.linspace(0, t_max, t_max*10000+1), spike_counts)    
+    # fig.show()
+    # this represents frequency from 0 to 10000 Hz
+    return np.abs(np.fft.fft(spike_counts))
+
+#7 
+def plot_frequency_spectrum(f, t_max):
+    fs = compute_frequency_spectrum(f, t_max)
+    # f = plt.figure(2)
+    plt.plot(np.linspace(0, 50, t_max*50+1), fs[:t_max*50+1])
+    print((np.argmax(fs[1:t_max*5000+1])+1)/t_max)
     plt.xlabel("frequency (Hz)")
-    plt.ylabel("energy")
-    """
-    low_f_comp = np.zeros(len(fs), 30001)
+    plt.ylabel("amplitude")
+    
+#8
+def tunning_curve_sin2(fs, t_max):
+    lowest_f_comp = []
     for f in fs:
-        neuron = LIF(I_sin(f), delta_t=0.1, EL=0, Vth=1, R=1, C=100)
-        neuron.computeV(3)
-    """
-
-
+        print(f)
+        response_fs = compute_frequency_spectrum(f, t_max)
+        lowest_f_comp.append((np.argmax(response_fs[1:t_max*5000+1])+1)/t_max)
+    plt.plot(fs, lowest_f_comp)
+    plt.xlim(0.99, 40.01)
+    plt.xlabel("input current frequency $f$ (Hz)")
+    plt.ylabel("frequency of the neuron response $f_r$ (Hz)")
+    
+    
 cmd_functions = (
     [ stimuli_plot,
       lambda : sin_current(1, 100, False),
       lambda : sin_current_spikes(100),
       lambda : sin_current_spikes(10),
       lambda : tunning_curve_sin(np.linspace(1, 40, 400)),
-      sin_trains, tunning_curve_sin2 ])
+      sin_trains,
+      lambda : plot_frequency_spectrum(20, 20),
+      lambda : tunning_curve_sin2(np.linspace(1, 40, 400), 10) ])
 
 
 if __name__ == "__main__":
