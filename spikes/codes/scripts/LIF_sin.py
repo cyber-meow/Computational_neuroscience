@@ -107,7 +107,7 @@ def tunning_curve_sin2(fs, t_max):
     plt.plot(fs, lowest_f_comp)
     plt.xlim(fs[0]-0.01, fs[-1]+0.01)
     plt.xlabel("input current frequency $f$ (Hz)")
-    plt.ylabel("frequency of the neuron response $f_r$ (Hz)")
+    plt.ylabel("frequency of the neuronal response $f_r$ (Hz)")
 
 #9
 def tunning_curve_sin3(fs):
