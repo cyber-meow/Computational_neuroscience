@@ -90,7 +90,6 @@ ENV/
 
 figures/
 *.tgz
-*.tex
 *.aux
 *.out
 *.swp
