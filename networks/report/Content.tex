@@ -1,5 +1,5 @@
 
-%mainfile: Spikes.tex
+%mainfile: Networks.tex
 
 \pagestyle{fancy} 
 \lhead{Atelier Nueromodélisation, 2017}
@@ -19,6 +19,164 @@
 
 \thispagestyle{fancy}
 
+\section*{Introduction}
+
+Besides studying the strucutre and function of a single neuron, it's also
+important to understand what may happen when neurons communicate between them.
+In this report we'll thus look at some simple models of neural networks.
+What will be their dynamics and expressive power? 
+(P.S. we'll ignore physical units for the whole report.)
+
+\section{Neuron with autapse}
+
+Let's start by working on the simplest model that one can ever imagine:
+there's only one neuron in the network, and its output feeds back onto 
+itself via a synapse (such a synapse is called an ``autapse''). 
+We note $x$ the neuron's firing rate, and it obeys the equation
+
+\[\dot{x}(t) = -x(t) + f(wx(t)+I)\]
+
+\noindent
+where $w = 0.04$ is the strength of the synaptic connection and $I = -2$ 
+is the external (and inhibitory) background input which is constant.
+Finally, $f$ is the input-output (or activation) function of the neuron having
+a sigmoidal form and is given by
+
+\[f(s) = 50(1 + tanh(s))\]
+
+\noindent
+where $s$ is the total input of the neuron.
+
+To see that $f$ is indeed a sigmoidal function, we plot it for the range 
+$s \in [-10, 10]$ as shown in \autoref{fig: activate}. Next, we plot the
+derivative of the firing rate $\dot{x}$ as a function of $x$ 
+(\autoref{fig: x_derivative}). The form should be easily predictable.
+The function $f$ is first stretched out and then shifted to the right,
+before we finally add the linear function $x \mapsto -x$ to it.
+
+We observe three zero-crossings in this graph. Let's call them respectively
+$x_1$, $x_2$ and $x_3$ with $x_1 < x_2 < x_3$. In fact we get $x_1 \sim 2$,
+$x_2 = 50$ and $x_3 \sim 98$. They are the fixed points of the dynamics.
+However, $x_1$ and $x_3$ are stable while $x_2$ is unstable.
+We can see that if $x$ lies between $x_1$ and $x_2$, $\dot{x}$ is negative
+so $x$ will be ``attract'' to $x_1$, and if $x$ is smaller than $x_1$,
+$\dot{x}$ is positive and $x$ will converge to $x_1$. The same analysis
+works for $x_3$.
+
+\newpage
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse1}
+  \caption{The activtion function $f$ of the neuron}
+  \label{fig: activate}
+\end{figure}
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse2}
+  \caption{$\dot(x)$ as a function of $x$}
+  \label{fig: x_derivative}
+\end{figure}
+
+Now we'll simulate the dynamics of the system by taking a time step 
+$\Delta t = 0.1$ and a total time period $T = 100$. First consider
+$x(0) = 49$.
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse3}
+  \caption{The evolution of $x$ for $x(0) = 49$}
+\end{figure}
+
+\noindent
+As predicted before $x$ is attracted to the dynamics attractor $x_1$.
+We redo the simulation for $x(0) = 50$.
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse4}
+  \caption{The evolution of $x$ for $x(0) = 50$}
+\end{figure}
+
+\noindent
+This time since 50 is itself a fixed point of the dynamics, the system 
+is at equilibrium and the solution doesn't change with time (though 50
+is a repeller). Finally let $x(0) = 51$.
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse5}
+  \caption{The evolution of $x$ for $x(0) = 51$}
+\end{figure}
+
+\noindent
+It's the symmetry of the case $x(0) = 49$. Between the repeller $x_2$ and
+the attractor $x_3$, $x$ evolves towards $x_3$.
+
+We then add noise to the system, so the differential equation becomes
+
+\[\dot{x}(t) = -x(t) + f(wx(t)+I) + \sigma\eta(t)\]
+
+\noindent
+where $\sigma(t)$ is Gaussian white noise with varaiance 1. First we suppose 
+$\sigma = 5$ and we simulate for $x(0) = 49$.
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse6}
+  \caption{The evolution of $x$ with noise $\sigma = 5$ for $x(0) = 49$}
+\end{figure}
+
+We see that there are two different scinarios. With noise we can no longer
+ensure that the system will converge towards $x_1$. Since the evolutions of
+the system are very different for $x < 50$ and $x > 50$, and 49 is close
+to 50, slight noise in the model may lead to totaly distinct results. This can
+be again shown for $x(0) = 50$ and $x(0) = 51$.
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse7}
+  \caption{The evolution of $x$ with noise $\sigma = 5$ for $x(0) = 50$}
+\end{figure}
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse8}
+  \caption{The evolution of $x$ with noise $\sigma = 5$ for $x(0) = 51$}
+\end{figure}
+
+Also notice that for $x(0) = 50$, $x$ will not stay anymore at the value 50 
+because as mentioned before, $x_2 = 50$ is a repeller. In a model with noise,
+the probability that $x$ is always 50 becomes null. 
+
+In all the above examples, though noise can have great influence on the 
+evolution of the system, once $x$ gets far enough from $x_2$, the evolution
+is still mainly dominated by the drift term $-x(t) + f(wx(t)+I)$.
+Nonetheless, this is not the case for a greater noise level, for example,
+when $\sigma = 80$, as shown in the top of the next page.
+
+\vspace{-1em}
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{autapse9}
+  \caption
+    {The evolution of $x$ with noise $\sigma = 80$ for $x(0) = 49, 50, 51$}
+\end{figure}
+
+As the resulting curves follow almost the same pattern for different 
+initial values of $x$, I plot all of them on the same graph. It's not worth
+it to plot several simulations for a same $x(0)$ because we would not be able
+to see great differences. In short, the evolution of $x$ is donimated by
+the noise term and becomes just noisy.
 
 \iffalse
 

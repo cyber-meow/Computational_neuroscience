@@ -14,6 +14,7 @@ class AutapseNeuron(object):
     w = 0.04
     I = -2
     delta_t = 0.1
+    sigma = 0
 
     def __init__(self, f, x0, **kwargs):
         self.f = f
@@ -21,6 +22,7 @@ class AutapseNeuron(object):
         self._t = 0
         self._x_his = [x0]
         self._t_his = [0]
+        set_all_args(self, kwargs)
 
     @property
     def t(self):
@@ -45,7 +47,9 @@ class AutapseNeuron(object):
     def _step(self):
         self._t += self.delta_t
         self._t_his.append(self.t)
-        self._x += self.x_derivative * self.delta_t
+        self._x += (
+            self.x_derivative * self.delta_t
+            + self.sigma * np.random.randn() * np.sqrt(self.delta_t))
         self._x_his.append(self.x)
 
     def simulate(self, T):
@@ -53,11 +57,11 @@ class AutapseNeuron(object):
         for _ in range(N):
             self._step()
 
-    def plot_x_his(self, label=None):
+    def plot_x_his(self, lw=None, label=None):
         if label == None:
-            plt.plot(self.t_his, self.x_his)
+            plt.plot(self.t_his, self.x_his, lw=lw)
         else:
-            plt.plot(self.t_his, self.x_his, label=label)
+            plt.plot(self.t_his, self.x_his, label=label, lw=lw)
         plt.xlabel("time $t$")
         plt.ylabel("the firing rate of the neuron $x$")
 
