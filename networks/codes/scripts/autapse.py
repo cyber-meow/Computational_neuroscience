@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath('../models'))
 import numpy as np
 import matplotlib.pyplot as plt
 
-from autapse import AutapseNeuron
+from network import AutapseNeuron
 
 
 def f(s):
