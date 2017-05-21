@@ -25,9 +25,11 @@ Besides studying the strucutre and function of a single neuron, it's also
 important to understand what may happen when neurons communicate between them.
 In this report we'll thus look at some simple models of neural networks.
 What will be their dynamics and expressive power? 
-(P.S. we'll ignore physical units for the whole report.)
+(P.S. we'll ignore all physical units for the whole report.)
 
-\section{Neuron with autapse}
+\section{Some simple networks}
+
+\subsection{Neuron with autapse}
 
 Let's start by working on the simplest model that one can ever imagine:
 there's only one neuron in the network, and its output feeds back onto 
@@ -178,7 +180,7 @@ it to plot several simulations for a same $x(0)$ because we would not be able
 to see great differences. In short, the evolution of $x$ is donimated by
 the noise term and becomes just noisy.
 
-\section{Circuit with mutual inhibition}
+\subsection{Circuit with mutual inhibition}
 
 The second model we'll discuss here is made up of two neurons that are coupled
 by mutual inhibition. We note the firing rate of the two neurons respectively
@@ -198,4 +200,91 @@ We may also want to use the vector notation that would turn out to be quite
 useful when the population of neurons gets larger, then the system of
 differential equations can be put in the form:
 
-\[\dot{\mathbf{x}}\]
+\[\dot{\mathbf{x}} = -\mathbf{x}(t) + f(\mathbf{Wx}(t) + \mathbf{I})\]
+
+\noindent
+where $\mathbf{x}$ is the vector of firing rates, $\mathbf{W}$ is the synaptic 
+weight matrix and $\mathbf{I}$ is the vector of input currents. In this
+particular case, we have
+
+\[
+  \mathbf{x}(t) = \left(
+    \begin{array}{c}
+      x_1(t)\\
+      x_2(t)
+    \end{array}\right) \qquad
+  %
+  \mathbf{W} = \left(
+    \begin{array}{cc}
+      0 & w\\
+      w & 0
+    \end{array}\right) \qquad
+  %
+  \mathbf{I} = \left(
+    \begin{array}{c}
+      I\\
+      I
+    \end{array}\right).
+\]
+
+To study the dynamics of this system, we first plot its nullclines, that is,
+the line for which $\dot{x}_1(t)=0$ and the line for which $\dot{x}_2(t)=0$.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{mutual1}
+  \caption
+    {The nullclines of the system of two mutual inhibitory neurons}
+\end{figure}
+
+We observe three crossing points of the the two lines. From left to right,
+we name them respectively $z_1$, $z_2$ and $z_3$ (so $z_2 = (50,50)$).
+These are the points such that $\dot{x}_1 = \dot{x}_2 = 0$. In other words,
+they're the fixed points of the dynamics. The plane is then divided into six
+zones and in each zone the system evolves in a specific direction. To put it
+simply, on the left of the blue line we have $\dot{x}_1 > 0$ while on the
+right $\dot{x}_1 < 0$. Similarly, below the orange line we get
+$\dot{x}_2 > 0$ whereas above it $\dot{x}_2 < 0$.
+
+To better undestand what this implies, we simulate the system and plot the 
+evolution of the firing rates for different initial conditions in the figure 
+below.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{mutual2}
+  \caption
+    {The evolution of the firing rates for different initial conditions}
+\end{figure}
+
+The initial conditions that are considered here are $(-50, -50)$, $(-40, 150)$,
+$(-25, 50)$, $(3, 50)$, $(75, -50)$, $(100, 130)$, $(140, 141)$ and 
+$(150, 90)$. First we notice that all of the simulations end up in some fixed
+point and the directions of the evolutions follow roughly what is described
+above. Further, it seems that (but without rigorous mathematical proof here)
+given the initial condition $(x(0),y(0))$, if $x(0) < y(0)$ the system evolves
+to $z_1$; if $x(0) = y(0)$ the system converges to $z_2$; finally if 
+$x(0) > y(0)$ the system moves to $z_3$.
+
+The yellow arrow serves as quite a good example: the initial condition is 
+$(150, 151)$, and the system gets once very clear to $z_2$ but then it again
+leaves away from this point and converges to $z_1$ at the end. As a result,
+being fixed point, $z_1$ and $z_3$ are stable while $z_2$ is unstable. 
+Finally, a plot of the vector field of derivatives can better 
+explain all of this.
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.7\linewidth]{mutual3}
+  \caption
+    {Derivatives at some points of the system}
+\end{figure}
+
+\subsection{Conclusion}
+In this section, we have investigated two relatively simple networks and spent
+time studying their dynamics. Several simulations have also been carried out.
+We saw that there are diffrent kinds of fixed points of dynamics and if the
+external currents are constant, the system will evolve towards some final 
+state (which is often an attractor). Finally, the presence of noise may more
+or less affect the evolution of the system.
+

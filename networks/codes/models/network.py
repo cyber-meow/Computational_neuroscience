@@ -104,8 +104,8 @@ class MutualInhibit(Network):
         x1s = np.linspace(-50, 150, 1000)
         x2s = self.f(self.w * x1s + self.i)
         plt.plot(x1s, x2s, label="$\dot{x}_2(t)=0$", ls=ls, lw=0.8)
-        plt.xlabel("the firing rate of the first neuron $x1$")
-        plt.ylabel("the firing rate of the second neuron $x2$")
+        plt.xlabel("the firing rate of the first neuron $x_1$")
+        plt.ylabel("the firing rate of the second neuron $x_2$")
 
     def plot_x_his(self):
         x1_his, x2_his = np.transpose(self.x_his)
