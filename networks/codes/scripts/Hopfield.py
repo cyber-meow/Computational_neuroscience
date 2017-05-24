@@ -71,12 +71,12 @@ class pattern_evolution(object):
         plot_neurons(self.Hopfield.x)
         if self.save:
             assert self.picname is not None
-            plt.savefig(
-                "{}_{}_{}".format(self.picname, i, j), bbox_inches='tight')
+            plt.savefig("{}_{}_{}".format(self.picname, self.i, self.j), 
+                        bbox_inches='tight')
         plt.show()
         while not plt.waitforbuttonpress(1): pass
         if self.next_trial:
-            self.i += 1; j = 0
+            self.i += 1; self.j = 0
             self.init_trial()
             self.next_trial = False
         else:

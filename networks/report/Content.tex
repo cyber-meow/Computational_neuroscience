@@ -276,11 +276,11 @@ explain all of this.
 \begin{figure}[H]
   \centering
   \includegraphics[width=0.7\linewidth]{mutual3}
-  \caption
-    {Derivatives at some points of the system}
+  \caption{Derivatives at some points of the system}
 \end{figure}
 
 \subsection{Conclusion}
+
 In this section, we have investigated two relatively simple networks and spent
 time studying their dynamics. Several simulations have also been carried out.
 We saw that there are diffrent kinds of fixed points of dynamics and if the
@@ -288,3 +288,262 @@ external currents are constant, the system will evolve towards some final
 state (which is often an attractor). Finally, the presence of noise may more
 or less affect the evolution of the system.
 
+
+\section{Hopfield Network}
+
+In the rest of the report we'll be interested in the continuous Hopfield 
+model. The dynamics of the network is given the differential equation
+
+\[\dot{\mathbf{x}} = -\mathbf{x}(t) + f(\mathbf{Wx}(t) + 
+  \sigma\mathbf{\eta}(t)).\]
+
+\noindent
+The vector notation is adopted and a noise is also introduced.
+Throughout the whole section, we set the dimension of $\mathbf{x}$ to be 
+$N=64$ and thus $\mathbf{W}$ is a $64\times64$ matrix. For the sake of 
+simplicity, we will take $f(x) = \mathrm{sgn}(x)$ for the moment being, and 
+we use the convention that $\mathrm{sgn}(0) = 0$. As a result, $\mathbf{x}$
+is typically a vector of reels between -1 and 1.
+
+A such network can act as an associative memory system. For example, to store
+one pattern $\mathbf{p}$ we set the weight matrix to 
+
+\[\mathbf{W} = \frac{1}{N} \mathbf{p}\mathbf{p}^{\top}.\]
+
+\noindent
+Then it's quite easy to see that $\mathbf{p}$ is a fixed point of the
+dynamics. For illustration purpose, we'll plot the activity of the neurons
+as a figure containing $[8 \times 8]$ cases.
+
+To start we say that the network is meant to store just one pattern 
+(\autoref{fig: Hopfield_one} - \textsf{A}) and the
+noise level is $\sigma = 0.1$. As shown in \autoref{fig: Hopfield_one} -
+\textsf{B}, the system may converge to $\mathbf{p}$. However, chances are 
+that the it evolves towards $-\mathbf{p}$ 
+(\autoref{fig: Hopfield_one} - \textsf{C}). We can easily show
+that $-\mathbf{p}$ is indeed also a fixed point of the dynamics, but since
+it's not a pattern that we aim to store, it's called a spurious state.
+Looking at the differential equation, one may notice that there is still
+another fixed point of the system: when $\mathbf{x} = \mathbf{0}$. 
+Nonetheless, unlike the two previous fixed points, this one is not stable
+and noise can bring the system away from it (\autoref{fig: Hopfield_one} -
+\textsf{D}).
+
+To store more patterns, say, $M$ patterns from $\mathbf{p}_1$ to 
+$\mathbf{p}_M$, the general rule is to construct the weight matrix as
+
+\[\mathbf{W} = \frac{1}{N} \sum_{i=1}^M \mathbf{p}_i\mathbf{p}_i^{\top}.\]
+
+\noindent
+For example in \autoref{fig: Hopfield_two} we store two patterns $\mathbf{p}$
+and $\mathbf{q}$ in the network. We start from 
+initial conditions that are respectively ``close'' to $\mathbf{p}$,
+$-\mathbf{p}$, $\mathbf{q}$ and $-\mathbf{q}$. By close we mean that we change
+the activity of a relative small number of neurons its opposite value 
+(from 1 to -1 and from -1 to 1). We see that the network is always able
+to evolve to the right fixed point.
+
+However, surely we cannot store an unlimited number of patterns in the 
+network. The network capcity depends on the explicit patterns that we want
+to store. In \autoref{fig: Hopfield_six} we try to store six different 
+patterns (\textsf{A}) in the Hopfield network, but it doen't work perfectly.
+In \autoref{fig: Hopfield_six} - \textsf{B} we start from a state that is
+close to the first pattern we'd like to store and we manage to retrieve it
+at the end. On the contrary, sometimes even though the initial condition 
+is very similar to one of the stored pattern, we may fail to converge to 
+this pattern and ends up in a state that is neither stored nor opposite of 
+one that should be stored in our network.
+
+\newpage
+\null
+\begin{figure}[h]
+  \centering
+  %
+  \begin{subfigure}{0.28\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{one_p0}
+    \textsf{A}
+  \end{subfigure}
+  %
+  \hspace{0.7em}
+  %
+  \begin{minipage}{0.62\textwidth}
+    \begin{subfigure}{\textwidth}
+      \textsf{B}
+      \centering
+      \includegraphics[width=0.18\textwidth]{one_4_0}
+      \includegraphics[width=0.18\textwidth]{one_4_1}
+      \includegraphics[width=0.18\textwidth]{one_4_2}
+      \includegraphics[width=0.18\textwidth]{one_4_3}
+      \includegraphics[width=0.18\textwidth]{one_4_4}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{C}
+      \centering
+      \includegraphics[width=0.18\textwidth]{one_3_0}
+      \includegraphics[width=0.18\textwidth]{one_3_1}
+      \includegraphics[width=0.18\textwidth]{one_3_2}
+      \includegraphics[width=0.18\textwidth]{one_3_3}
+      \includegraphics[width=0.18\textwidth]{one_3_4}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{D}
+      \centering
+      \includegraphics[width=0.18\textwidth]{one_0_0}
+      \includegraphics[width=0.18\textwidth]{one_0_1}
+      \includegraphics[width=0.18\textwidth]{one_0_2}
+      \includegraphics[width=0.18\textwidth]{one_0_3}
+      \includegraphics[width=0.18\textwidth]{one_0_4}
+    \end{subfigure}
+    %
+  \end{minipage}
+  \vspace{1.2em}
+  \caption{Store one pattern in a Hopfield network.
+           \textsf{A.} The stored pattern.
+           \textsf{B.C.D.} Simulations with different initial conditions
+           (between two successive picutres we carry out 10 steps of
+           simulation).}
+  \label{fig: Hopfield_one}
+\end{figure}
+
+\vfill
+
+\begin{figure}[H]
+  \centering
+  %
+  \begin{minipage}{0.275\textwidth}
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{two_p0}
+      \textsf{A}
+    \end{subfigure}\\[0.3em]
+    \begin{subfigure}{\textwidth}
+      \centering
+      \includegraphics[width=\textwidth]{two_p1}
+      \textsf{B}
+    \end{subfigure}
+  \end{minipage}
+  %
+  \hspace{0.7em}
+  %
+  \begin{minipage}{0.62\textwidth}
+    \begin{subfigure}{\textwidth}
+      \textsf{C}
+      \centering
+      \includegraphics[width=0.22\textwidth]{two_1_0}
+      \includegraphics[width=0.22\textwidth]{two_1_1}
+      \includegraphics[width=0.22\textwidth]{two_1_2}
+      \includegraphics[width=0.22\textwidth]{two_1_3}
+    \end{subfigure}\\[0.8em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{D}
+      \centering
+      \includegraphics[width=0.22\textwidth]{two_2_0}
+      \includegraphics[width=0.22\textwidth]{two_2_1}
+      \includegraphics[width=0.22\textwidth]{two_2_2}
+      \includegraphics[width=0.22\textwidth]{two_2_3}
+    \end{subfigure}\\[0.8em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{E}
+      \centering
+      \includegraphics[width=0.22\textwidth]{two_3_0}
+      \includegraphics[width=0.22\textwidth]{two_3_1}
+      \includegraphics[width=0.22\textwidth]{two_3_2}
+      \includegraphics[width=0.22\textwidth]{two_3_3}
+    \end{subfigure}\\[0.8em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{F}
+      \centering
+      \includegraphics[width=0.22\textwidth]{two_4_0}
+      \includegraphics[width=0.22\textwidth]{two_4_1}
+      \includegraphics[width=0.22\textwidth]{two_4_2}
+      \includegraphics[width=0.22\textwidth]{two_4_3}
+    \end{subfigure}
+    %
+  \end{minipage}
+  \vspace{1.2em}
+  \caption{Store two patterns in a Hopfield network.
+           \textsf{A.B.} Stored patterns.
+           \textsf{C.D.E.F.} Simulations with different initial conditions
+           that are close to stored patterns or their opposites.}
+  \label{fig: Hopfield_two}
+\end{figure}
+\vfill
+
+\newpage
+
+\null
+\vfill
+
+\begin{figure}[H]
+  \centering
+  \begin{subfigure}{\textwidth}
+    \textsf{A}
+    \centering
+    \includegraphics[width=0.15\textwidth]{six_p0}
+    \includegraphics[width=0.15\textwidth]{six_p1}
+    \includegraphics[width=0.15\textwidth]{six_p2}
+    \includegraphics[width=0.15\textwidth]{six_p3}
+    \includegraphics[width=0.15\textwidth]{six_p4}
+    \includegraphics[width=0.15\textwidth]{six_p5}
+  \end{subfigure}\\[1em]
+  %
+  \hspace{1em}\rule{0.95\textwidth}{1.8pt}\\
+  \vspace{1em}
+  %
+  \begin{subfigure}{\textwidth}
+    \textsf{B}
+    \centering
+    \includegraphics[width=0.15\textwidth]{six_1_0}
+    \includegraphics[width=0.15\textwidth]{six_1_1}
+    \includegraphics[width=0.15\textwidth]{six_1_2}
+    \includegraphics[width=0.15\textwidth]{six_1_3}
+    \includegraphics[width=0.15\textwidth]{six_1_4}
+    \includegraphics[width=0.15\textwidth]{six_1_5}
+  \end{subfigure}\\[0.8em]
+  %
+  \begin{subfigure}{\textwidth}
+    \textsf{C}
+    \centering
+    \includegraphics[width=0.15\textwidth]{six_9_0}
+    \includegraphics[width=0.15\textwidth]{six_9_1}
+    \includegraphics[width=0.15\textwidth]{six_9_2}
+    \includegraphics[width=0.15\textwidth]{six_9_3}
+    \includegraphics[width=0.15\textwidth]{six_9_4}
+    \includegraphics[width=0.15\textwidth]{six_9_5}
+  \end{subfigure}\\[0.8em]
+  %
+  \begin{subfigure}{\textwidth}
+    \textsf{D}
+    \centering
+    \includegraphics[width=0.15\textwidth]{six_8_0}
+    \includegraphics[width=0.15\textwidth]{six_8_1}
+    \includegraphics[width=0.15\textwidth]{six_8_2}
+    \includegraphics[width=0.15\textwidth]{six_8_3}
+    \includegraphics[width=0.15\textwidth]{six_8_4}
+    \includegraphics[width=0.15\textwidth]{six_8_5}
+  \end{subfigure}\\[0.8em]
+  %
+  \begin{subfigure}{\textwidth}
+    \textsf{E}
+    \centering
+    \includegraphics[width=0.15\textwidth]{six_16_0}
+    \includegraphics[width=0.15\textwidth]{six_16_1}
+    \includegraphics[width=0.15\textwidth]{six_16_2}
+    \includegraphics[width=0.15\textwidth]{six_16_3}
+    \includegraphics[width=0.15\textwidth]{six_16_4}
+    \includegraphics[width=0.15\textwidth]{six_16_5}
+  \end{subfigure}
+  \vspace{1.2em}
+  \caption{Try to store six patterns in a Hopfield network.
+           \textsf{A.} Stored patterns.
+           \textsf{B.C.D.E.} Simulations with different initial conditions.}
+  \label{fig: Hopfield_six}
+\end{figure}
+
+\vfill
