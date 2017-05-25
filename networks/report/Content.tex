@@ -44,7 +44,7 @@ is the external (and inhibitory) background input which is constant.
 Finally, $f$ is the input-output (or activation) function of the neuron having
 a sigmoidal form and is given by
 
-\[f(s) = 50(1 + tanh(s))\]
+\[f(s) = 50(1 + \tanh(s))\]
 
 \noindent
 where $s$ is the total input of the neuron.
@@ -283,13 +283,15 @@ explain all of this.
 
 In this section, we have investigated two relatively simple networks and spent
 time studying their dynamics. Several simulations have also been carried out.
-We saw that there are diffrent kinds of fixed points of dynamics and if the
-external currents are constant, the system will evolve towards some final 
-state (which is often an attractor). Finally, the presence of noise may more
+We saw that there were diffrent kinds of fixed points of dynamics and if the
+external currents were constant, the system would evolve towards some final 
+state (which was often an attractor). Finally, the presence of noise may more
 or less affect the evolution of the system.
 
 
 \section{Hopfield Network}
+
+\subsection{Description}
 
 In the rest of the report we'll be interested in the continuous Hopfield 
 model. The dynamics of the network is given the differential equation
@@ -314,6 +316,8 @@ one pattern $\mathbf{p}$ we set the weight matrix to
 Then it's quite easy to see that $\mathbf{p}$ is a fixed point of the
 dynamics. For illustration purpose, we'll plot the activity of the neurons
 as a figure containing $[8 \times 8]$ cases.
+
+\subsection{Simulations}
 
 To start we say that the network is meant to store just one pattern 
 (\autoref{fig: Hopfield_one} - \textsf{A}) and the
@@ -346,17 +350,30 @@ to evolve to the right fixed point.
 However, surely we cannot store an unlimited number of patterns in the 
 network. The network capcity depends on the explicit patterns that we want
 to store. In \autoref{fig: Hopfield_six} we try to store six different 
-patterns (\textsf{A}) in the Hopfield network, but it doen't work perfectly.
+patterns in the Hopfield network, but it doen't work perfectly.
 In \autoref{fig: Hopfield_six} - \textsf{B} we start from a state that is
 close to the first pattern we'd like to store and we manage to retrieve it
 at the end. On the contrary, sometimes even though the initial condition 
-is very similar to one of the stored pattern, we may fail to converge to 
+is very similar to one of the stored patterns, we may fail to converge to 
 this pattern and ends up in a state that is neither stored nor opposite of 
-one that should be stored in our network.
+one that should be stored in our network (\autoref{fig: Hopfield_six} -
+\textsf{C}, the initial condition is close to the fifth pattern we aim to
+store).
+
+If we start from a random initial state, the network may converge to
+a stored pattern (\autoref{fig: Hopfield_six} - \textsf{D}), but as
+described above, it can also evolve towards an arbitrary spurious state
+that cannot be directly predicted from the stored patterns
+(\autoref{fig: Hopfield_six} - \textsf{E, F}). Moreover, the convergence
+might take a longer time and sometimes is not as direct as before 
+(\autoref{fig: Hopfield_six} - \textsf{D}, the network finally converges
+to the second stored pattern though showing only 50 simulation steps it may 
+not yet be totally clear).
 
 \newpage
 \null
-\begin{figure}[h]
+\vfill
+\begin{figure}[H]
   \centering
   %
   \begin{subfigure}{0.28\textwidth}
@@ -419,6 +436,7 @@ one that should be stored in our network.
       \includegraphics[width=\textwidth]{two_p0}
       \textsf{A}
     \end{subfigure}\\[0.3em]
+    %
     \begin{subfigure}{\textwidth}
       \centering
       \includegraphics[width=\textwidth]{two_p1}
@@ -521,6 +539,17 @@ one that should be stored in our network.
   \begin{subfigure}{\textwidth}
     \textsf{D}
     \centering
+    \includegraphics[width=0.15\textwidth]{six_13_0}
+    \includegraphics[width=0.15\textwidth]{six_13_1}
+    \includegraphics[width=0.15\textwidth]{six_13_2}
+    \includegraphics[width=0.15\textwidth]{six_13_3}
+    \includegraphics[width=0.15\textwidth]{six_13_4}
+    \includegraphics[width=0.15\textwidth]{six_13_5}
+  \end{subfigure}\\[0.8em]
+  %
+  \begin{subfigure}{\textwidth}
+    \textsf{E}
+    \centering
     \includegraphics[width=0.15\textwidth]{six_8_0}
     \includegraphics[width=0.15\textwidth]{six_8_1}
     \includegraphics[width=0.15\textwidth]{six_8_2}
@@ -530,7 +559,7 @@ one that should be stored in our network.
   \end{subfigure}\\[0.8em]
   %
   \begin{subfigure}{\textwidth}
-    \textsf{E}
+    \textsf{F}
     \centering
     \includegraphics[width=0.15\textwidth]{six_16_0}
     \includegraphics[width=0.15\textwidth]{six_16_1}
@@ -544,6 +573,300 @@ one that should be stored in our network.
            \textsf{A.} Stored patterns.
            \textsf{B.C.D.E.} Simulations with different initial conditions.}
   \label{fig: Hopfield_six}
+\end{figure}
+
+\vfill
+
+\newpage
+
+Now how about replacing sgn by tanh for the activation function? To simplify
+the task, we'll first remove noise from the network and we attempt to
+store only one pattern in the network. As shown in 
+\autoref{fig: Hopfield_tanh},
+the values of final states are proportional to those of $\mathbf{p}$,
+but neuron activities are in general of much smaller magnitude. The 
+convergence is also much slower. 
+
+It's easy to imagine that in this case, the presence of noise can degrade
+severely the performance of the network. Indeed when we put again
+$\sigma=0.1$, the result is shown in \autoref{fig: Hopfield_tanh_noise}. 
+Neuron activities seem to be pure noise and we can hardly retrieve any
+information from it (notice that until now for the same simulation in
+one figure two successive images are separated by 10 simulation steps
+while from now on they'll be separated by 50 simulation steps).
+
+The problem becomes even more complex if we store several patterns in 
+the network. Again we'll remove noise from the model and this time we want
+to store two patterns in the network. Several scenarios can occur: the
+network may just work as before except a final state with much lower 
+activity level (\autoref{fig: Hopfield_tanh_two}); however, chances are
+the two stored patterns are no longer fixed points of the dynamics and
+even starting from the stored patterns we fall into another state that
+doesnt't appear to be reltated to what we want to store 
+(\autoref{fig: Hopfield_tanh_two2}). We notice also that the convergence
+of the system takes much more long time.
+
+\subsection{Conclusion}
+With the differential equation that is given at the beginning of the
+section and the general rule used to generate the weight matrix, 
+we have simulated the dynamics of the network under various situations. 
+We saw that when $f = \mathrm{sgn}$ and if we stored just a small number
+of patterns the Hopfield network could act correctly as an associative 
+memory despite the presence of noise.
+However the network capacity is without doubt limited and many spurious
+states could appear if we tried to store too many patterns in a network.
+
+When $f = \tanh$, the dynamics of the system seems to be more complicated.
+The values of the final states are much closer to 0, noise can be fatal to
+the system, the convergence is much slower and unexpected attractors
+may appear when we want to store more than one patterns.
+
+We didn't do any mathematical proofs in this section, but to study more
+in details the Hopfield network, new notions must be introduced (e.g.
+energy of the network) and this will be a topic much more complex and
+beyond the scope of this report.
+
+\begin{figure}[H]
+  \centering
+  %
+  \begin{subfigure}{0.26\textwidth}
+    \centering
+    \includegraphics[width=\textwidth]{tanh_p0}
+    \textsf{A}
+  \end{subfigure}
+  %
+  \hspace{0.7em}
+  %
+  \begin{minipage}{0.64\textwidth}
+    \begin{subfigure}{\textwidth}
+      \textsf{B}
+      \centering
+      \includegraphics[width=0.15\textwidth]{tanh_1_0}
+      \includegraphics[width=0.15\textwidth]{tanh_1_1}
+      \includegraphics[width=0.15\textwidth]{tanh_1_2}
+      \includegraphics[width=0.15\textwidth]{tanh_1_3}
+      \includegraphics[width=0.15\textwidth]{tanh_1_4}
+      \includegraphics[width=0.15\textwidth]{tanh_1_5}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{C}
+      \centering
+      \includegraphics[width=0.15\textwidth]{tanh_3_0}
+      \includegraphics[width=0.15\textwidth]{tanh_3_1}
+      \includegraphics[width=0.15\textwidth]{tanh_3_2}
+      \includegraphics[width=0.15\textwidth]{tanh_3_3}
+      \includegraphics[width=0.15\textwidth]{tanh_3_4}
+      \includegraphics[width=0.15\textwidth]{tanh_3_5}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \textsf{D}
+      \centering
+      \includegraphics[width=0.15\textwidth]{tanh_5_0}
+      \includegraphics[width=0.15\textwidth]{tanh_5_1}
+      \includegraphics[width=0.15\textwidth]{tanh_5_2}
+      \includegraphics[width=0.15\textwidth]{tanh_5_3}
+      \includegraphics[width=0.15\textwidth]{tanh_5_4}
+      \includegraphics[width=0.15\textwidth]{tanh_5_5}
+    \end{subfigure}
+    %
+  \end{minipage}
+  \vspace{1.2em}
+  \caption{Store one pattern in a Hopfield network with $f = \tanh$ 
+           without noise.
+           \textsf{A.} The stored pattern.
+           \textsf{B.C.D.} Simulations with random initial conditions.}
+  \label{fig: Hopfield_tanh}
+
+\end{figure}
+
+\newpage
+\null
+\vfill
+
+\begin{figure}[H]
+  \centering
+  %
+  \begin{subfigure}{\textwidth}
+    \hspace{0.6em}
+    \textsf{A}
+    \includegraphics[width=0.11\textwidth]{tanh_p0}
+  \end{subfigure}\\[1em]
+  %
+  \hspace*{1.2em}\rule{0.95\textwidth}{1.8pt}\\[1em]
+  %
+  \begin{subfigure}{\textwidth}
+    \hspace{0.6em}
+    \textsf{B}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_0}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_1}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_2}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_3}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_4}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_5}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_6}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_1_7}
+  \end{subfigure}\\[0.6em]
+  %
+  \begin{subfigure}{\textwidth}
+    \hspace{0.6em}
+    \textsf{C}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_0}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_1}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_2}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_3}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_4}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_5}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_6}
+    \includegraphics[width=0.11\textwidth]{tanh_noise_2_7}
+  \end{subfigure}
+  %
+  \vspace{1.2em}
+  \caption{Store one pattern in a Hopfield network with $f = \tanh$ 
+           with noise.
+           \textsf{A.} The stored pattern.
+           \textsf{B.C.} Simulations with random initial conditions
+           (between two successive picutres we carry out 50 steps of
+           simulation).}
+  \label{fig: Hopfield_tanh_noise}
+
+\end{figure}
+
+\vfill
+
+\begin{figure}[H]
+  %
+    \begin{subfigure}{\textwidth}
+      \hspace{1em}
+      \textsf{A}
+      \includegraphics[width=0.15\textwidth]{tanh_two_p0}
+      \includegraphics[width=0.15\textwidth]{tanh_two_p1}
+    \end{subfigure}\\[1em]
+  %
+  \hspace*{2.2em}\rule{0.95\textwidth}{1.8pt}\\[1em]
+  %
+    \begin{subfigure}{\textwidth}
+      \hspace{1em}
+      \textsf{B}
+      \includegraphics[width=0.15\textwidth]{tanh_two_6_0}
+      \includegraphics[width=0.15\textwidth]{tanh_two_6_1}
+      \includegraphics[width=0.15\textwidth]{tanh_two_6_2}
+      \includegraphics[width=0.15\textwidth]{tanh_two_6_3}
+      \includegraphics[width=0.15\textwidth]{tanh_two_6_4}
+      \includegraphics[width=0.15\textwidth]{tanh_two_6_5}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \hspace{1em}
+      \textsf{C}
+      \includegraphics[width=0.15\textwidth]{tanh_two_7_0}
+      \includegraphics[width=0.15\textwidth]{tanh_two_7_1}
+      \includegraphics[width=0.15\textwidth]{tanh_two_7_2}
+      \includegraphics[width=0.15\textwidth]{tanh_two_7_3}
+      \includegraphics[width=0.15\textwidth]{tanh_two_7_4}
+      \includegraphics[width=0.15\textwidth]{tanh_two_7_5}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \hspace{1em}
+      \textsf{D}
+      \includegraphics[width=0.15\textwidth]{tanh_two_9_0}
+      \includegraphics[width=0.15\textwidth]{tanh_two_9_1}
+      \includegraphics[width=0.15\textwidth]{tanh_two_9_2}
+      \includegraphics[width=0.15\textwidth]{tanh_two_9_3}
+      \includegraphics[width=0.15\textwidth]{tanh_two_9_4}
+      \includegraphics[width=0.15\textwidth]{tanh_two_9_5}
+    \end{subfigure}
+    %
+  \vspace{1.2em}
+  \caption{Store two patterns in a Hopfield network with $f = \tanh$ 
+           without noise, with success.
+           \textsf{A.} Stored patterns.
+           \textsf{B.C.D.} Simulations with random initial conditions.}
+  \label{fig: Hopfield_tanh_two}
+
+\end{figure}
+
+\vfill
+
+\newpage
+\null
+\vfill
+
+\begin{figure}[H]
+  %
+    \begin{subfigure}{\textwidth}
+      \hspace{1em}
+      \textsf{A}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_p0}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_p1}
+    \end{subfigure}\\[1em]
+  %
+  \hspace*{2.2em}\rule{0.95\textwidth}{1.8pt}\\[1em]
+  %
+    \begin{subfigure}{\textwidth}
+      \hspace{2em}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_0}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_1}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_2}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_3}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_4}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_5}\\
+      \hspace*{1em}
+      \textsf{B}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_6}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_7}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_8}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_9}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_10}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_1_11}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \hspace{2em}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_0}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_1}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_2}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_3}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_4}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_5}\\
+      \hspace*{1em}
+      \textsf{C}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_6}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_7}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_8}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_9}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_10}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_3_11}
+    \end{subfigure}\\[0.6em]
+    %
+    \begin{subfigure}{\textwidth}
+      \hspace{2em}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_0}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_1}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_2}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_3}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_4}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_5}\\
+      \hspace*{1em}
+      \textsf{D}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_6}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_7}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_8}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_9}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_10}
+      \includegraphics[width=0.15\textwidth]{tanh_two2_8_11}
+    \end{subfigure}\\[0.6em]
+    %
+  \vspace{1.2em}
+  \caption{Store two patterns in a Hopfield network with $f = \tanh$ 
+           without noise, new fixed points appear instead of the stored ones.
+           \textsf{A.} Stored patterns.
+           \textsf{B.C.} Simulations starting from stored patterns.
+           \textsf{D.} Simulations with random initial condition.}
+  \label{fig: Hopfield_tanh_two2}
+
 \end{figure}
 
 \vfill

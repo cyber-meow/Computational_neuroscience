@@ -138,8 +138,14 @@ if __name__ == "__main__":
     f = np.sign if k == 1 else np.tanh
 
     print("save? (y or n)")
-    if input() in ['y', 'yes']:
-        print("please give the prifix of the picture name")
-        patterns(n, f, ts, prob, sigma, input(), True)
-    else:
-        patterns(n, f, ts, prob, sigma)
+    while True:
+        r = input()
+        if r in ['y', 'yes']:
+            print("please give the prifix (path included) of the picture name")
+            patterns(n, f, ts, prob, sigma, input(), True)
+            break
+        elif r in ['n', 'no']:
+            patterns(n, f, ts, prob, sigma)
+            break
+        else:
+            print("please enter y or n")
