@@ -5,6 +5,7 @@ for the simplest model (Figure 1A., learn only the readout weightà
 """
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 from utility import set_all_args
 
@@ -49,11 +50,11 @@ class Network(object):
         self.J[mask] = zeros[mask]
 
     def init_w(self):
-        """
         variance = 1/(self.pho*self.N)
         self.w = np.sqrt(variance) * np.random.randn(self.N)
         """
         self.w = np.zeros(self.N)
+        """
 
     def init_JGz(self):
         self.JGz = np.random.uniform(-1, 1, self.N)
@@ -122,6 +123,7 @@ class FORCE(Network):
         super().init_parameters()
         self.init_P()
         self._z_his = [self.z]
+        self._dws = []
 
     def init_P(self):
         self.P = np.eye(self.N)/self.alpha
@@ -129,6 +131,10 @@ class FORCE(Network):
     @property
     def z_his(self):
         return self._z_his
+        
+    @property
+    def dws(self):
+        return self._dws
 
     @property
     def error(self):
@@ -138,8 +144,11 @@ class FORCE(Network):
         n = int(T/self.dt)
         for _ in range(n):
             self._step()
-            if update and len(self.t_his)%self.update_cycle == 1:
-                self._update()
+            if len(self.t_his)%self.update_cycle == 1:
+                if update:
+                    self._update()
+                else:
+                    self._dws.append(0)
             self._z_his.append(self.z)
 
     def _update(self):
@@ -151,6 +160,27 @@ class FORCE(Network):
                    / (1 + np.dot(np.dot(self.r, self.P), self.r)))
 
     def _update_w(self):
-        self.w -= self.error * np.dot(self.P, self.r)
+        delta_w = self.error * np.dot(self.P, self.r)
+        self.w -= delta_w
+        self._dws.append(np.linalg.norm(delta_w))
+
+    def plot_rs(self, neuron, ax=None):
+        if ax is None:
+            fig, ax = plt.subplots()
+        rs = [r[neuron] for r in self.r_his]
+        ax.plot(self.t_his, rs)
+        
+    def plot_zs(self, ax=None):
+        if ax is None:
+            fig, ax = plt.subplots()
+        ax.plot(self.t_his, self.z_his)
+        
+    def plot_dws(self, ax=None):
+        if ax is None:
+            fig, ax = plt.subplots()
+        ts = self.t_his[self.update_cycle::self.update_cycle]
+        ax.plot(ts, self.dws)
+        ax.set_xlabel("time $t$ (s)")
+        ax.set_ylabel("$\|\Delta \mathbb{w}\|$")
 
 
