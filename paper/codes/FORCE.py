@@ -25,12 +25,16 @@ class Network(object):
         self.init_parameters()
 
     def init_parameters(self):
-        self.init_t()
-        self.init_x()
         self.init_J()
         self.init_w()
         self.init_JGz()
+        self.init_exp()
 
+    def init_exp(self):
+        self.init_t()
+        self.init_x()
+        self._z_his = [self.z]
+    
     def init_t(self):
         self._t = 0
         self._t_his = [0]
@@ -88,6 +92,10 @@ class Network(object):
         return np.dot(self.w, self.r)
 
     @property
+    def z_his(self):
+        return self._z_his
+
+    @property
     def x_derivative(self):
         return (- self.x + self.g*np.dot(self.J, self.r) 
                 + self.gGz*self.JGz*self.z) / self.tau
@@ -99,11 +107,13 @@ class Network(object):
         self._r = np.tanh(self.x)
         self._x_his.append(self.x.copy())
         self._r_his.append(self.r.copy())
+        
 
     def simulate(self, T):
         n = int(T/self.dt)
         for _ in range(n):
-            self._step()
+            self._step()            
+            self._z_his.append(self.z)
 
 
 class FORCE(Network):
@@ -122,15 +132,13 @@ class FORCE(Network):
     def init_parameters(self):
         super().init_parameters()
         self.init_P()
-        self._z_his = [self.z]
+
+    def init_exp(self):
+        super().init_exp()
         self._dws = []
 
     def init_P(self):
         self.P = np.eye(self.N)/self.alpha
-
-    @property
-    def z_his(self):
-        return self._z_his
         
     @property
     def dws(self):
@@ -164,23 +172,32 @@ class FORCE(Network):
         self.w -= delta_w
         self._dws.append(np.linalg.norm(delta_w))
 
-    def plot_rs(self, neuron, ax=None):
+    def plot_rs(self, neuron, ax=None, start=0, end=None):
         if ax is None:
             fig, ax = plt.subplots()
-        rs = [r[neuron] for r in self.r_his]
-        ax.plot(self.t_his, rs)
+        rs = [r[neuron] for r in self.r_his[start:end]]
+        ax.plot(self.t_his[start:end], rs)
         
-    def plot_zs(self, ax=None):
+    def plot_zs(self, ax=None, start=0, end=None):
         if ax is None:
             fig, ax = plt.subplots()
-        ax.plot(self.t_his, self.z_his)
-        
-    def plot_dws(self, ax=None):
+        ax.plot(self.t_his[start:end], self.z_his[start:end], color='red')
+    
+    def plot_fs(self, ax=None, start=0, end=None):
+        if ax is None:
+            fig, ax = plt.subplots()
+        ts = self.t_his[start:end]
+        fs = [self.f(t) for t in ts]
+        ax.plot(ts, fs, color='green')
+    
+    def plot_dws(self, ax=None, start=0, end=None):
         if ax is None:
             fig, ax = plt.subplots()
         ts = self.t_his[self.update_cycle::self.update_cycle]
-        ax.plot(ts, self.dws)
+        ax.plot(ts[start:end], self.dws[start:end])
+        """
         ax.set_xlabel("time $t$ (s)")
         ax.set_ylabel("$\|\Delta \mathbb{w}\|$")
+        """
 
 

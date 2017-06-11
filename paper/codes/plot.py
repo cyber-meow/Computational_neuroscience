@@ -18,3 +18,13 @@ def plot_rs(force, neurons):
     axs[-1].add_artist(
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
+    
+def compare_generate(force, T):
+    start = len(force.t_his)
+    force.simulate(T, update=False)
+    fig, ax = plt.subplots()
+    force.plot_zs(ax, start=start)
+    force.plot_fs(ax, start=start)
+    ax.set_xlabel('time $t$ (s)')
+    ax.axes.get_yaxis().set_visible(False)
+    
