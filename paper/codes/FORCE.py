@@ -121,9 +121,14 @@ class FORCE(Network):
     def init_parameters(self):
         super().init_parameters()
         self.init_P()
+        self._z_his = [self.z]
 
     def init_P(self):
         self.P = np.eye(self.N)/self.alpha
+
+    @property
+    def z_his(self):
+        return self._z_his
 
     @property
     def error(self):
@@ -135,6 +140,7 @@ class FORCE(Network):
             self._step()
             if update and len(self.t_his)%self.update_cycle == 1:
                 self._update()
+            self._z_his.append(self.z)
 
     def _update(self):
         self._update_P()
