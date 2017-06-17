@@ -228,7 +228,7 @@ class FORCE(Network):
         if ax is None:
             fig, ax = plt.subplots()
         ts = self.main_exp.t_his[self.update_cycle::self.update_cycle]
-        ax.plot(ts[start:end], self.dws[start:end])
+        ax.plot(ts[start:end], self.dws[start:end], color='orange')
         """
         ax.set_xlabel("time $t$ (s)")
         ax.set_ylabel("$\|\Delta \mathbb{w}\|$")

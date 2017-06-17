@@ -2,6 +2,7 @@ import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
+from matplotlib.gridspec import GridSpec
 
 from FORCE import FORCE
 from patterns import triangles
@@ -15,21 +16,31 @@ def add_bottom_line(fig, ax):
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
 
-def hide_ax(ax):
+def super_graph(force, t1, t2):
+    fig = plt.figure(facecolor='white')
+    gs = GridSpec(2, 1, height_ratios=[9,1])
+    ax = plt.subplot(gs[0])
+    rs = np.transpose(np.array(force.main_exp.r_his)[:,:10])
+    offset = 0
+    ts = force.main_exp.t_his
+    for i in range(10):
+        ax.plot(ts, rs[i]+offset, color='blue')
+        if i < 9:
+            offset += 1.2 * (np.max(rs[i]) - np.min(rs[i+1]))
+        else:
+            offset += 1.2 * (np.max(rs[i]) - np.min(force.main_exp.z_his))
+    ax.plot(ts, np.array(force.main_exp.z_his)+offset, color="red")
     ax.set_frame_on(False)
-    ax.axes.get_xaxis().set_visible(False)
     ax.axes.get_yaxis().set_visible(False)
+    ax.axes.get_xaxis().set_visible(False)
+    axb = plt.subplot(gs[1])
+    force.plot_dws(axb)
+    axb.set_frame_on(False)
+    axb.axes.get_yaxis().set_visible(False)
+    axb.set_ylim(ymin=-0.1)
+    axb.set_xlabel("time $t$ (s)")
+    add_bottom_line(fig, axb)
 
-def plot_rs(force, neurons):
-    fig, axs = plt.subplots(len(neurons), sharex=True, facecolor='white')
-    for i,ax in enumerate(axs):
-        force.plot_rs(neurons[i], ax)
-        ax.set_frame_on(False)
-        if i<len(axs)-1:
-            ax.axes.get_xaxis().set_visible(False)
-        ax.axes.get_yaxis().set_visible(False)
-    add_bottom_line(fig, axs[-1])
-    
 def compare_generate(force, T, pic_name=None, sep=False):
     force.init_exp("new")
     force.simulate(T, exp_name="new", update=False)    
