@@ -15,22 +15,27 @@ def add_bottom_line(fig, ax):
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
 
-def super_graph(force):
+def super_graph(force, t1, t2):
     fig, ax = plt.subplots(facecolor='white', figsize=(16,6))
     rs = np.transpose(np.array(force.main_exp.r_his)[:,:10])
     ts = force.main_exp.t_his[force.update_cycle::force.update_cycle]
-    mul = np.ptp(rs[0]) / np.ptp(force.dws) * 2
-    dws = np.array(force.dws) * mul
-    ax.plot(ts, dws, color='orange')
-    offset = np.max(dws) - np.min(rs[0])
+    if np.ptp(force.dws) != 0:    
+        mul = np.ptp(rs[0]) / np.ptp(force.dws) * 2
+        dws = np.array(force.dws) * mul
+        ax.plot(ts, dws, color='orange')
+        offset = 0.9 * (np.max(dws) - np.min(rs[0]))
+    else:
+        offset = 0
     ts = force.main_exp.t_his
     for i in range(10):
         ax.plot(ts, rs[i]+offset, color='blue')
         if i < 9:
-            offset += 1.2 * (np.max(rs[i]) - np.min(rs[i+1]))
+            offset += 1.1 * (np.max(rs[i]) - np.min(rs[i+1]))
         else:
-            offset += 1.2 * (np.max(rs[i]) - np.min(force.main_exp.z_his))
+            offset += 1.1 * (np.max(rs[i]) - np.min(force.main_exp.z_his))
     ax.plot(ts, np.array(force.main_exp.z_his)+offset, color="red")
+    ax.axvline(t1, alpha=0.2, color='black', lw=10)
+    ax.axvline(t2, alpha=0.2, color='black', lw=10)
     ax.set_frame_on(False)
     ax.axes.get_yaxis().set_visible(False)
     ax.margins(0, 0.01)
