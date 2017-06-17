@@ -19,12 +19,16 @@ def plot_rs(force, neurons):
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
     
-def compare_generate(force, T):
-    start = len(force.t_his)
-    force.simulate(T, update=False)
+def compare_generate(force, T, pic_name=None):
+    force.init_exp("new")
+    force.simulate(T, exp_name="new", update=False)
     fig, ax = plt.subplots()
-    force.plot_zs(ax, start=start)
-    force.plot_fs(ax, start=start)
+    exp = force.exps["new"]
+    exp.plot_fs(force.f, ax)
+    exp.plot_zs(ax)
     ax.set_xlabel('time $t$ (s)')
     ax.axes.get_yaxis().set_visible(False)
+    plt.margins(0.02, None)
+    if pic_name is not None:
+        plt.savefig("../figures/{}".format(pic_name))
     
