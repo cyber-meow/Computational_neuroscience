@@ -35,7 +35,11 @@ def sixteen_sins(T, amp, t):
     for i in range(16):
         ret += amp / amp_divs[i] * np.sin(2*i*np.pi*t/T)
     return ret
-    
+
+@pattern
+def noisy_four_sins(T, amp, sigma, t):
+    return four_sins(T, amp)(t) + sigma*np.random.randn()
+
 def plot_patterns(T, p):
     ts = np.arange(0,T,1e-3)
     fs = [p(t) for t in ts]

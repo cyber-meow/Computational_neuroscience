@@ -85,23 +85,22 @@ and controlable output patterns.
 \section{Network Structures}
 
 The network that was studied in the paper and will be study here is composed
-of individual neurons that are characterized by their firing rates and
+of individual neurons characterized by their firing rates and
 sparsely interconnected through excitatory and inhibiroty synapses of 
 various strengths (when it comes to the biological reality, we may need to
 seperate group of excitatory and inhibitory neurons, but when we're modeling
-neural circuits, such details become less importants). Initially, the
+neural circuits, such details become less important). Initially, the
 connectivity and synaptic strengths of the network are chosen randomly.
 
-Now the problem is the definition of the output of the networks. The
+The next problem is the definition of the output of the networks. The
 technical choice is to define it as a linear combination of neuronal
 activities. Formally, if at time $t$, we assemble the firing rates of all
-the neurons into a column vector $\mathbf{r}(t)$ and the weights 
+the neurons into a column vector $\mathbf{r}(t)$, and the weights 
 connecting these neurons to the output is described by the column vector
 $\mathbf{w}(t)$, then the network output is
 
 \[z(t) = \mathbf{w}^{\top}\mathbf{r}(t).\]
 
-\noindent
 Schematically, this output will be stored in a readout unit and its
 value may be fed back into the network (it depends on the concrete
 structure). Though thus far the network output is only a scalar, by using
@@ -116,8 +115,17 @@ $f: t \mapsto f(t)$. Either $z$ is generated in the abscence of any input
 or it may depend on inputs of the network in a specific way. In the scope
 of this report, only the first case will be discussed.
 
-Finally, as shown in Figure 1, three different network structures are 
-employed in the article.
+Finally, as shown in \autoref{fig: network_structures}, three different 
+network structures are employed in the article. 
+
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=0.3\textwidth, valign=t]{network_structure1}
+  \includegraphics[width=0.3\textwidth, valign=t]{network_structure2}
+  \includegraphics[width=0.3\textwidth, valign=t]{network_structure3}
+  \caption{}
+  \label{fig: network_structures}
+\end{figure}
 
 \iffalse
 

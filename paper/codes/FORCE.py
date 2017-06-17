@@ -233,5 +233,3 @@ class FORCE(Network):
         ax.set_xlabel("time $t$ (s)")
         ax.set_ylabel("$\|\Delta \mathbb{w}\|$")
         """
-
-
