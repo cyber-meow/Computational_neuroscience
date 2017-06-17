@@ -15,6 +15,11 @@ def add_bottom_line(fig, ax):
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
 
+def hide_ax(ax):
+    ax.set_frame_on(False)
+    ax.axes.get_xaxis().set_visible(False)
+    ax.axes.get_yaxis().set_visible(False)
+
 def plot_rs(force, neurons):
     fig, axs = plt.subplots(len(neurons), sharex=True, facecolor='white')
     for i,ax in enumerate(axs):
@@ -49,6 +54,18 @@ def plot_rs_pca(r_pca):
     fig, axs = plt.subplots(8, sharex=True, facecolor='white')
     for i,ax in enumerate(axs):
         ax.plot(rs[i], color='darkgoldenrod')
-        ax.set_frame_on(False)
-        ax.axes.get_xaxis().set_visible(False)
-        ax.axes.get_yaxis().set_visible(False)
+        hide_ax(ax)
+
+def plot_zs_pca(force, exp, pca, r_pca):
+    fig, (ax1, ax2) = plt.subplots(2, sharex=True, facecolor='white')
+    exp.plot_zs(ax1)
+    hide_ax(ax1)
+    pca8 = np.zeros_like(r_pca)
+    pca8[:,:8] = r_pca[:,:8]
+    rs_pca8 = pca.inverse_transform(pca8)
+    zs_pca8 = np.dot(rs_pca8, force.w)
+    ax2.plot(exp.t_his, zs_pca8, color='darkgoldenrod')
+    hide_ax(ax2)
+
+def plot_eigenvalues(pca):
+    plt.plot(pca.explained_variance_)
