@@ -2,7 +2,6 @@ import numpy as np
 from sklearn.decomposition import PCA
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D
-from matplotlib.gridspec import GridSpec
 
 from FORCE import FORCE
 from patterns import triangles
@@ -16,12 +15,14 @@ def add_bottom_line(fig, ax):
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
 
-def super_graph(force, t1, t2):
-    fig = plt.figure(facecolor='white')
-    gs = GridSpec(2, 1, height_ratios=[9,1])
-    ax = plt.subplot(gs[0])
+def super_graph(force):
+    fig, ax = plt.subplots(facecolor='white', figsize=(16,6))
     rs = np.transpose(np.array(force.main_exp.r_his)[:,:10])
-    offset = 0
+    ts = force.main_exp.t_his[force.update_cycle::force.update_cycle]
+    mul = np.ptp(rs[0]) / np.ptp(force.dws) * 2
+    dws = np.array(force.dws) * mul
+    ax.plot(ts, dws, color='orange')
+    offset = np.max(dws) - np.min(rs[0])
     ts = force.main_exp.t_his
     for i in range(10):
         ax.plot(ts, rs[i]+offset, color='blue')
@@ -32,14 +33,8 @@ def super_graph(force, t1, t2):
     ax.plot(ts, np.array(force.main_exp.z_his)+offset, color="red")
     ax.set_frame_on(False)
     ax.axes.get_yaxis().set_visible(False)
-    ax.axes.get_xaxis().set_visible(False)
-    axb = plt.subplot(gs[1])
-    force.plot_dws(axb)
-    axb.set_frame_on(False)
-    axb.axes.get_yaxis().set_visible(False)
-    axb.set_ylim(ymin=-0.1)
-    axb.set_xlabel("time $t$ (s)")
-    add_bottom_line(fig, axb)
+    ax.margins(0, 0.01)
+    ax.set_xlabel("time $t$ (s)")
 
 def compare_generate(force, T, pic_name=None, sep=False):
     force.init_exp("new")
