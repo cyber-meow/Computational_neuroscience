@@ -47,6 +47,10 @@ def rectangles(T, amp, t):
         return -amp
     return amp
 
+@pattern
+def sin(T, amp, t):
+    return amp*np.sin(2*np.pi*t/T)
+
 def plot_patterns(T, p):
     ts = np.arange(0,T,1e-3)
     fs = [p(t) for t in ts]
