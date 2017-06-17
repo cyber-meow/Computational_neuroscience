@@ -115,7 +115,7 @@ class Network(object):
     def init_exp(self, exp_name, cont=True):
         if cont:
             t = self.main_exp.t
-            x = self.main_exp.x
+            x = self.main_exp.x.copy()
             exper = exp(self.N, self.w, self.x_ma, t, x)
         else:
             exper = exp(self.N, self.w, self.x_ma)
