@@ -14,11 +14,11 @@ def pattern(func):
 
 @pattern
 def triangles(T, amp, t):
-    n = t // T
-    y_delta = (t-T*n) / T * 2 * amp
+    n = t // (T/2)
+    y_delta = (t-T*n/2) / T * 4 * amp
     if n % 2 == 0:
-        return mag-y_delta
-    return -mag+y_delta
+        return amp-y_delta
+    return -amp+y_delta
 
 @pattern
 def four_sins(T, amp, t):
@@ -35,7 +35,22 @@ def sixteen_sins(T, amp, t):
     for i in range(16):
         ret += amp / amp_divs[i] * np.sin(2*i*np.pi*t/T)
     return ret
-    
+
+@pattern
+def noisy_four_sins(T, amp, sigma, t):
+    return four_sins(T, amp)(t) + sigma*np.random.randn()
+
+@pattern
+def rectangles(T, amp, t):
+    n = t // (T/2)
+    if n%2 == 0:
+        return -amp
+    return amp
+
+@pattern
+def sin(T, amp, t):
+    return amp*np.sin(2*np.pi*t/T)
+
 def plot_patterns(T, p):
     ts = np.arange(0,T,1e-3)
     fs = [p(t) for t in ts]
