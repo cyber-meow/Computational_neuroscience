@@ -266,7 +266,7 @@ quantity, multiple learning rates are specified by $\mathbf{P}$, which is
 in reality a running estimate of the quantity 
 $(\sum_t \mathbf{r}(t)\mathbf{r}^{\top}(t) + \alpha \mathbf{I})^{-1}$.
 The use of $\mathbf{P}$ allows us to have a finer control over learning
-because it adapts the learning rate to the magnitud of different principal
+because it adapts the learning rate to the magnitude of different principal
 components of the network activity. However, concerning how it works and
 why it works, it will no be explained here.
 
@@ -296,10 +296,53 @@ $e_+(t)/e_-(t) \rightarrow 1$.
 In this section we'll apply the FORCE procedure on the network for different
 target functions. The network is able to learn to generate a variety of
 patterns after training. The first example presented here is a 
-triangle-wave of period 0.6 s . The network activity is chaotic before 
-training, 
+triangle wave of period 0.6 s (\autoref{fig: triangle}). 
+The network activity is chaotic before training (blue lines), and 
+during the training
+phase, as predicted the error is reduced dramatically after a first weight
+update and the output of the network (red line)
+matches target function throughout
+the rest of training. The progression of learning can be observed through
+the decrease of size of fluctuations of the readout vector
+(orange line). $\mathbf{w}$ 
+fluctuates rapidly at the beginning of training to force the network
+to produce the desired periodic pattern, but gradually it stabilizes and
+find the static weights that are needed to generate the target function
+without requiring modifications. After the training, the network continues
+to generate the desired pattern indefinitely without need of modifcation 
+on decoding weights.
+
+We also notice that the network activity chaotic prior to training 
+becomes periodic in order to produce the periodic target function, and
+it continues to be periodic after learning. The learning process is indeed
+quite rapid here, only five cycles of the traingle wave is sufficient 
+here (and in the paper the convergens takes place only after four cycles).
+This time depends however a lot on the form of the target function.
+For example, to learn
 
 
+\begin{figure}[H]
+  \centering
+  \includegraphics[width=\textwidth]{triangle_text}
+  \vspace{0.4em}
+  \caption{
+    \textbf{FORCE Learning Applied to a Triangle Wave.}\\[0.1 em]
+    Network output $z$ is in red, the firing rates of 10 sample neurons
+    are in blue and the orange trace represents the magnitude of
+    fluctuations of $\mathbf{w}$ 
+    ($\Delta \mathbf{w} = \mathbf{w}(t) = \mathbf{w}(t - \Delta t)$).\\[0.1em]
+    The network exhibits chaotic spontaneous activity before training.
+    During training, the readout error is reduced to small magnitude 
+    rapidly and then the output matches always the target function.
+    Readout weights fluctuate greatly at first, gradually the fluctuations
+    diminish and finally almost no more modifications of $\mathbf{w}$ are 
+    needed.
+    At this moment we can turn off the learning procedure and the network 
+    persists in generating the desired triangle wave indefinitely
+    without requiring any weight modifcation.
+  }
+  \label{fig: triangle}
+\end{figure}
 
 \iffalse
 
