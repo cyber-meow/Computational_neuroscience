@@ -58,7 +58,7 @@ def compare_generate(force, T, pic_name=None, sep=False, figsize=(8,6)):
     exp.plot_zs(ax)
     ax.set_xlabel('time $t$ (s)')
     ax.axes.get_yaxis().set_visible(False)
-    plt.margins(0.02, None)
+    plt.margins(0.02, 0.02)
     if pic_name is not None:
         plt.savefig("../figures/{}".format(pic_name))
 
