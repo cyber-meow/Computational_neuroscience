@@ -15,11 +15,11 @@ def add_bottom_line(fig, ax):
         Line2D((xmin, xmax), (ymin, ymin), color='black', linewidth=2))
     fig.subplots_adjust(hspace=0)
 
-def super_graph(force, t1, t2):
-    fig, ax = plt.subplots(facecolor='white', figsize=(16,6))
+def super_graph(force, times, num=10, plot_dw=True, figsize=(16,6)):
+    fig, ax = plt.subplots(facecolor='white', figsize=figsize)
     rs = np.transpose(np.array(force.main_exp.r_his)[:,:10])
     ts = force.main_exp.t_his[force.update_cycle::force.update_cycle]
-    if np.ptp(force.dws) != 0:    
+    if plot_dw and np.ptp(force.dws) != 0:
         mul = np.ptp(rs[0]) / np.ptp(force.dws) * 2
         dws = np.array(force.dws) * mul
         ax.plot(ts, dws, color='orange')
@@ -27,30 +27,33 @@ def super_graph(force, t1, t2):
     else:
         offset = 0
     ts = force.main_exp.t_his
-    for i in range(10):
+    for i in range(num):
         ax.plot(ts, rs[i]+offset, color='blue')
-        if i < 9:
+        if i < num-1:
             offset += 1.1 * (np.max(rs[i]) - np.min(rs[i+1]))
         else:
             offset += 1.1 * (np.max(rs[i]) - np.min(force.main_exp.z_his))
     ax.plot(ts, np.array(force.main_exp.z_his)+offset, color="red")
-    ax.axvline(t1, alpha=0.2, color='black', lw=10)
-    ax.axvline(t2, alpha=0.2, color='black', lw=10)
+    for t in times:
+        ax.axvline(t, alpha=0.2, color='black', lw=10)
     ax.set_frame_on(False)
     ax.axes.get_yaxis().set_visible(False)
-    ax.margins(0, 0.01)
+    if plot_dw and np.ptp(force.dws) != 0:
+        ax.margins(0, 0.01)
+    else:
+        ax.margins(0, 0.03)
+        add_bottom_line(fig, ax)
     ax.set_xlabel("time $t$ (s)")
 
-def compare_generate(force, T, pic_name=None, sep=False):
+def compare_generate(force, T, pic_name=None, sep=False, figsize=(8,6)):
     force.init_exp("new")
     force.simulate(T, exp_name="new", update=False)    
     exp = force.exps["new"]
+    fig, ax = plt.subplots(figsize=figsize)
     if sep:
-        fig, ax = plt.subplots(figsize=(8,12))
         dec = np.ptp(exp.z_his)*1.2
         exp.plot_fs(lambda t: force.f(t)-dec, ax)
     else:
-        fig, ax = plt.subplots()
         exp.plot_fs(force.f, ax)
     exp.plot_zs(ax)
     ax.set_xlabel('time $t$ (s)')
